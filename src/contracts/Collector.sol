@@ -22,7 +22,7 @@ import {Address} from 'solidity-utils/contracts/oz-common/Address.sol';
  * - Same as with creation, on Sablier the `sender` and `recipient` can cancel a stream. Here, only fund admin and recipient
  * @author BGD Labs
  **/
-contract AaveCollectorToDiscuss is
+contract Collector is
   VersionedInitializable,
   ICollector,
   ReentrancyGuard,

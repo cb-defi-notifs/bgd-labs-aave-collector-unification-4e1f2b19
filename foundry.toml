@@ -5,8 +5,9 @@ script = 'scripts'
 out = 'out'
 libs = ['lib']
 remappings = [
+    'forge-std/=lib/forge-std/src/',
+    'solidity-utils/=lib/solidity-utils/src/',
 ]
-
 [rpc_endpoints]
 ethereum="${RPC_ETHEREUM}"
 optimism = "${RPC_OPTIMISM}"

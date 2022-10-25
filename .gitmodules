@@ -9,3 +9,6 @@
 	url = https://github.com/bgd-labs/protocol-v2
 [submodule "/Users/rust/BoredGhosts/aave-collector/lib/protocol-v2"]
 	branch = update-atoken-revision
+[submodule "lib/aave-address-book"]
+	path = lib/aave-address-book
+	url = https://github.com/bgd-labs/aave-address-book

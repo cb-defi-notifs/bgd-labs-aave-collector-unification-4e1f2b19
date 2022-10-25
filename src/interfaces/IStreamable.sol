@@ -75,5 +75,7 @@ interface IStreamable {
 
   function initialize(address fundsAdmin) external;
 
+  function getNextStreamId() external view returns (uint256);
+
   function setNextStreamId(uint256 streamId) external;
 }

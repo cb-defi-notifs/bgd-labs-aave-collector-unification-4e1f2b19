@@ -2,17 +2,17 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
-import {ICollector} from '../interfaces/ICollector.sol';
-import {VersionedInitializable} from '../libs/VersionedInitializable.sol';
-import {IStreamable} from '../interfaces/IStreamable.sol';
-import {AdminControlledEcosystemReserve} from './AdminControlledEcosystemReserve.sol';
-import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
 import {SafeERC20} from 'solidity-utils/contracts/oz-common/SafeERC20.sol';
 import {Address} from 'solidity-utils/contracts/oz-common/Address.sol';
+import {ICollector} from '../interfaces/ICollector.sol';
+import {IStreamable} from '../interfaces/IStreamable.sol';
+import {VersionedInitializable} from '../libs/VersionedInitializable.sol';
+import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
 
 /**
- * @title AaveCollectorToDiscuss
- * @notice Stores ERC20 tokens of an ecosystem reserve, adding streaming capabilities.
+ * @title Collector
+ * @notice Stores ERC20 tokens of an ecosystem reserve and allows to dispose of them via approval
+ * or transfer dynamics or streaming capabilities.
  * Modification of Sablier https://github.com/sablierhq/sablier/blob/develop/packages/protocol/contracts/Sablier.sol
  * Original can be found also deployed on https://etherscan.io/address/0xCD18eAa163733Da39c232722cBC4E8940b1D8888
  * Modifications:

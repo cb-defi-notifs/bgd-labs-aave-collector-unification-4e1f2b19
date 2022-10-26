@@ -22,7 +22,7 @@ contract UpgradeV2ATokensPayload {
     NEW_COLLECTOR = newCollector;
   }
 
-  function execute() public {
+  function execute() external {
     address[] memory reserves = AaveV2Avalanche.POOL.getReservesList();
 
     updateATokens(reserves);

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IPayload {
+interface IProposalGenericExecutor {
   function execute() external;
 }

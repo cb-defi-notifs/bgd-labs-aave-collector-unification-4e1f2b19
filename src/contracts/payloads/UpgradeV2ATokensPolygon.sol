@@ -8,7 +8,6 @@ import {DataTypes, ConfiguratorInputTypes} from 'aave-address-book/AaveV2.sol';
 import {AaveV2Polygon} from 'aave-address-book/AaveV2Polygon.sol';
 import {ICollectorController} from '../../interfaces/v2/ICollectorController.sol';
 import {ILendingPoolConfigurator} from '../../interfaces/v2/ILendingPoolConfigurator.sol';
-import {IERC20V2} from '../../interfaces/v2/IERC20V2.sol';
 
 contract UpgradeV2ATokensPayload {
   ILendingPoolConfigurator public immutable POOL_CONFIGURATOR;
@@ -21,7 +20,7 @@ contract UpgradeV2ATokensPayload {
     NEW_COLLECTOR = newCollector;
   }
 
-  function execute() public {
+  function execute() external {
     AToken aTokenImplementation = new AToken();
 
     // get all aTokens
@@ -34,12 +33,7 @@ contract UpgradeV2ATokensPayload {
 
       // send asset to the new collector
       uint256 balance = aToken.balanceOf(AaveV2Polygon.COLLECTOR);
-      COLLECTOR_CONTROLLER.transfer(
-        AaveV2Polygon.COLLECTOR,
-        IERC20V2(address(aToken)),
-        NEW_COLLECTOR,
-        balance
-      );
+      COLLECTOR_CONTROLLER.transfer(AaveV2Polygon.COLLECTOR, aToken, NEW_COLLECTOR, balance);
 
       // update implementation of the aToken and reinit
       ConfiguratorInputTypes.UpdateATokenInput memory input = ConfiguratorInputTypes

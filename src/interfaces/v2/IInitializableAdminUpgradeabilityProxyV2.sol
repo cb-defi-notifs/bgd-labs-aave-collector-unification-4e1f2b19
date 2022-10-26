@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.6.0;
 
-interface IInitializableAdminUpgradeabilityProxy {
+interface IInitializableAdminUpgradeabilityProxyV2 {
   function upgradeTo(address newImplementation) external;
 
   function upgradeToAndCall(address newImplementation, bytes calldata data) external payable;

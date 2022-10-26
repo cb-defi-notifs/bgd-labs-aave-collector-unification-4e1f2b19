@@ -6,19 +6,19 @@ import {AToken} from '@aave/core-v2/contracts/protocol/tokenization/AToken.sol';
 import {LendingPoolConfigurator} from '@aave/core-v2/contracts/protocol/lendingpool/LendingPoolConfigurator.sol';
 import {DataTypes, ConfiguratorInputTypes} from 'aave-address-book/AaveV2.sol';
 import {AaveV2Avalanche} from 'aave-address-book/AaveV2Avalanche.sol';
-import {ICollectorController} from '../interfaces/v2/ICollectorController.sol';
-import {ILendingPoolConfigurator} from '../interfaces/v2/ILendingPoolConfigurator.sol';
-import {AaveMigrationCollector} from '../interfaces/v2/AaveMigrationCollector.sol';
-import {IInitializableAdminUpgradeabilityProxy} from '../interfaces/v2/IInitializableAdminUpgradeabilityProxy.sol';
+import {AaveMigrationCollector} from './AaveMigrationCollector.sol';
+import {ICollectorController} from '../../interfaces/v2/ICollectorController.sol';
+import {ILendingPoolConfigurator} from '../../interfaces/v2/ILendingPoolConfigurator.sol';
+import {IInitializableAdminUpgradeabilityProxyV2} from '../../interfaces/v2/IInitializableAdminUpgradeabilityProxyV2.sol';
 
 contract UpgradeV2ATokensPayload {
   ILendingPoolConfigurator public immutable POOL_CONFIGURATOR;
-  IInitializableAdminUpgradeabilityProxy public immutable COLLECTOR_PROXY;
+  IInitializableAdminUpgradeabilityProxyV2 public immutable COLLECTOR_PROXY;
   address public immutable NEW_COLLECTOR;
 
   constructor(address newCollector) public {
     POOL_CONFIGURATOR = ILendingPoolConfigurator(address(AaveV2Avalanche.POOL_CONFIGURATOR));
-    COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxy(AaveV2Avalanche.COLLECTOR);
+    COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxyV2(AaveV2Avalanche.COLLECTOR);
     NEW_COLLECTOR = newCollector;
   }
 

@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.6.0;
 
-import {IERC20} from '@aave/core-v2/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
-import {VersionedInitializable} from './VersionedInitializable.sol';
+import {IERC20V2} from '../../interfaces/v2/IERC20V2.sol';
+import {VersionedInitializable} from '../../interfaces/v2/VersionedInitializable.sol';
 
 /**
  * @title AaveMigrationCollector
@@ -25,9 +25,8 @@ contract AaveMigrationCollector is VersionedInitializable {
    */
   function initialize(address[] calldata assets, address recepient) external initializer {
     for (uint256 i = 0; i < assets.length; i++) {
-      IERC20 token = IERC20(assets[i]);
+      IERC20V2 token = IERC20V2(assets[i]);
       uint256 balance = token.balanceOf(address(this));
-
       if (balance > 0) {
         token.transfer(recepient, balance);
       }

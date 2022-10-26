@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
 import {SafeERC20} from 'solidity-utils/contracts/oz-common/SafeERC20.sol';
-import {AdminControlledEcosystemReserve} from './AdminControlledEcosystemReserve.sol';
+import {AdminControlledEcosystemReserve} from './_AdminControlledEcosystemReserve.sol';
 import {IStreamable} from '../interfaces/IStreamable.sol';
 import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
 
@@ -19,11 +19,7 @@ import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
  * - Same as with creation, on Sablier the `sender` and `recipient` can cancel a stream. Here, only fund admin and recipient
  * @author BGD Labs
  **/
-contract AaveCollector is
-  AdminControlledEcosystemReserve,
-  ReentrancyGuard,
-  IStreamable
-{
+contract AaveCollector is AdminControlledEcosystemReserve, ReentrancyGuard, IStreamable {
   using SafeERC20 for IERC20;
 
   /*** Storage Properties ***/
@@ -115,16 +111,10 @@ contract AaveCollector is
    * @param streamId The id of the stream for which to query the delta.
    * @notice Returns the time delta in seconds.
    */
-  function deltaOf(uint256 streamId)
-    public
-    view
-    streamExists(streamId)
-    returns (uint256 delta)
-  {
+  function deltaOf(uint256 streamId) public view streamExists(streamId) returns (uint256 delta) {
     Stream memory stream = _streams[streamId];
     if (block.timestamp <= stream.startTime) return 0;
-    if (block.timestamp < stream.stopTime)
-      return block.timestamp - stream.startTime;
+    if (block.timestamp < stream.stopTime) return block.timestamp - stream.startTime;
     return stream.stopTime - stream.startTime;
   }
 
@@ -318,16 +308,9 @@ contract AaveCollector is
     delete _streams[streamId];
 
     IERC20 token = IERC20(stream.tokenAddress);
-    if (recipientBalance > 0)
-      token.safeTransfer(stream.recipient, recipientBalance);
+    if (recipientBalance > 0) token.safeTransfer(stream.recipient, recipientBalance);
 
-    emit CancelStream(
-      streamId,
-      stream.sender,
-      stream.recipient,
-      senderBalance,
-      recipientBalance
-    );
+    emit CancelStream(streamId, stream.sender, stream.recipient, senderBalance, recipientBalance);
     return true;
   }
 }

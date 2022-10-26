@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import {ProxyAdmin} from 'solidity-utils/contracts/transparent-proxy/ProxyAdmin.sol';
-import {Collector} from './Collector.sol';
-import {IInitializableAdminUpgradeabilityProxy} from '../interfaces/IInitializableAdminUpgradeabilityProxy.sol';
-import {IStreamable} from '../interfaces/IStreamable.sol';
+import {Collector} from '../Collector.sol';
+import {IInitializableAdminUpgradeabilityProxy} from '../../interfaces/IInitializableAdminUpgradeabilityProxy.sol';
+import {IStreamable} from '../../interfaces/IStreamable.sol';
 
 contract UpgradeAaveCollectorPayloadL2 {
   // v3 collector proxy address

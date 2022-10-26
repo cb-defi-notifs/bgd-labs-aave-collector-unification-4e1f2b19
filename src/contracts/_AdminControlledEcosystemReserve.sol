@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
@@ -15,10 +15,7 @@ import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
  * @dev Done abstract to add an `initialize()` function on the child, with `initializer` modifier
  * @author BGD Labs
  **/
-abstract contract AdminControlledEcosystemReserve is
-  VersionedInitializable,
-  ICollector
-{
+abstract contract AdminControlledEcosystemReserve is VersionedInitializable, ICollector {
   using SafeERC20 for IERC20;
   using Address for address payable;
 
@@ -27,8 +24,7 @@ abstract contract AdminControlledEcosystemReserve is
   uint256 public constant REVISION = 5;
 
   /// @inheritdoc ICollector
-  address public constant ETH_MOCK_ADDRESS =
-    0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+  address public constant ETH_MOCK_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
   modifier onlyFundsAdmin() {
     require(msg.sender == _fundsAdmin, 'ONLY_BY_FUNDS_ADMIN');

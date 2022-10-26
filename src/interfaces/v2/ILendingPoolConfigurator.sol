@@ -4,6 +4,6 @@ pragma solidity >=0.6.0;
 
 import {ConfiguratorInputTypes} from 'aave-address-book/AaveV2.sol';
 
-interface ILendingPoolConfiguratorV2 {
+interface ILendingPoolConfigurator {
   function updateAToken(ConfiguratorInputTypes.UpdateATokenInput calldata input) external;
 }

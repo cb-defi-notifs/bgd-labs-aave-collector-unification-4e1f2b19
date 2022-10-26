@@ -5,37 +5,41 @@ pragma solidity >=0.6.0;
 import {AToken} from '@aave/core-v2/contracts/protocol/tokenization/AToken.sol';
 import {LendingPoolConfigurator} from '@aave/core-v2/contracts/protocol/lendingpool/LendingPoolConfigurator.sol';
 import {DataTypes, ConfiguratorInputTypes} from 'aave-address-book/AaveV2.sol';
-import {AaveV2Polygon} from 'aave-address-book/AaveV2Polygon.sol';
+import {AaveV2Avalanche} from 'aave-address-book/AaveV2Avalanche.sol';
 import {ICollectorController} from '../interfaces/v2/ICollectorController.sol';
 import {ILendingPoolConfigurator} from '../interfaces/v2/ILendingPoolConfigurator.sol';
+import {AaveMigrationCollector} from '../interfaces/v2/AaveMigrationCollector.sol';
+import {IInitializableAdminUpgradeabilityProxy} from '../interfaces/v2/IInitializableAdminUpgradeabilityProxy.sol';
 
 contract UpgradeV2ATokensPayload {
   ILendingPoolConfigurator public immutable POOL_CONFIGURATOR;
-  ICollectorController public immutable COLLECTOR_CONTROLLER;
+  IInitializableAdminUpgradeabilityProxy public immutable COLLECTOR_PROXY;
   address public immutable NEW_COLLECTOR;
 
   constructor(address newCollector) public {
-    POOL_CONFIGURATOR = ILendingPoolConfigurator(address(AaveV2Polygon.POOL_CONFIGURATOR));
-    COLLECTOR_CONTROLLER = ICollectorController(AaveV2Polygon.COLLECTOR_CONTROLLER);
+    POOL_CONFIGURATOR = ILendingPoolConfigurator(address(AaveV2Avalanche.POOL_CONFIGURATOR));
+    COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxy(AaveV2Avalanche.COLLECTOR);
     NEW_COLLECTOR = newCollector;
   }
 
   function execute() public {
-    AToken aTokenImplementation = new AToken();
+    address[] memory reserves = AaveV2Avalanche.POOL.getReservesList();
 
-    // get all aTokens
+    updateATokens(reserves);
+
+    migrateAssetsToNewCollector(reserves);
+  }
+
+  function updateATokens(address[] memory reserves) internal {
+    // deploy new aToken implementation
+    AToken aTokenImplementation = new AToken();
     DataTypes.ReserveData memory reserveData;
-    address[] memory reserves = AaveV2Polygon.POOL.getReservesList();
 
     for (uint256 i = 0; i < reserves.length; i++) {
-      reserveData = AaveV2Polygon.POOL.getReserveData(reserves[i]);
+      reserveData = AaveV2Avalanche.POOL.getReserveData(reserves[i]);
       AToken aToken = AToken(reserveData.aTokenAddress);
 
-      // send asset to the new collector
-      uint256 balance = aToken.balanceOf(AaveV2Polygon.COLLECTOR);
-      COLLECTOR_CONTROLLER.transfer(AaveV2Polygon.COLLECTOR, aToken, NEW_COLLECTOR, balance);
-
-      // update implementation of the aToken and reinit
+      // update implementation of the aToken and re-init
       ConfiguratorInputTypes.UpdateATokenInput memory input = ConfiguratorInputTypes
         .UpdateATokenInput({
           asset: aToken.UNDERLYING_ASSET_ADDRESS(),
@@ -48,8 +52,19 @@ contract UpgradeV2ATokensPayload {
         });
 
       POOL_CONFIGURATOR.updateAToken(input);
-
       // TODO: init AToken contract with some mock stuff for security reasons
     }
+  }
+
+  // upgrade collector to the new implementation which will transfer all the assets on the init
+  function migrateAssetsToNewCollector(address[] memory reserves) internal {
+    bytes memory initParams = abi.encodeWithSelector(
+      AaveMigrationCollector.initialize.selector,
+      reserves,
+      NEW_COLLECTOR
+    );
+
+    AaveMigrationCollector migrationCollector = new AaveMigrationCollector();
+    COLLECTOR_PROXY.upgradeToAndCall(address(migrationCollector), initParams);
   }
 }

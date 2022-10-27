@@ -6,7 +6,7 @@ import {Collector} from '../Collector.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../../interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 import {IStreamable} from '../../interfaces/IStreamable.sol';
 
-contract UpgradeAaveCollectorPayloadL2 {
+contract UpgradeAaveCollectorPayloadL1 {
   // collector proxy address
   IInitializableAdminUpgradeabilityProxy public constant COLLECTOR_PROXY =
     IInitializableAdminUpgradeabilityProxy(0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c);

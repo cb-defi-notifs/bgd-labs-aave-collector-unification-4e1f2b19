@@ -11,15 +11,14 @@ import {ICollectorController} from '../../interfaces/v2/ICollectorController.sol
 import {ILendingPoolConfigurator} from '../../interfaces/v2/ILendingPoolConfigurator.sol';
 import {IInitializableAdminUpgradeabilityProxyV2} from '../../interfaces/v2/IInitializableAdminUpgradeabilityProxyV2.sol';
 
-contract UpgradeV2ATokensPayload {
+contract UpgradeV2ATokensAvalanche {
   ILendingPoolConfigurator public immutable POOL_CONFIGURATOR;
   IInitializableAdminUpgradeabilityProxyV2 public immutable COLLECTOR_PROXY;
-  address public immutable NEW_COLLECTOR;
+  address public constant NEW_COLLECTOR = 0x5ba7fd868c40c16f7aDfAe6CF87121E13FC2F7a0;
 
-  constructor(address newCollector) public {
+  constructor() public {
     POOL_CONFIGURATOR = ILendingPoolConfigurator(address(AaveV2Avalanche.POOL_CONFIGURATOR));
     COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxyV2(AaveV2Avalanche.COLLECTOR);
-    NEW_COLLECTOR = newCollector;
   }
 
   function execute() external {

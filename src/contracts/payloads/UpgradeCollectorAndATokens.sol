@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IProposalGenericExecutor} from '../../interfaces/IProposalGenericExecutor.sol';
 
-contract UpgradeCollectorAndATokens is IProposalGenericExecutor {
+contract UpgradeCollectorAndATokens {
   IProposalGenericExecutor public immutable UPGRADE_COLLECTOR_PAYLOAD;
   IProposalGenericExecutor public immutable UPGRADE_V2_ATOKENS_PAYLOAD;
 

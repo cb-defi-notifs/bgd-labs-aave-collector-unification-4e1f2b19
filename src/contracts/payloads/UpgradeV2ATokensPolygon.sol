@@ -9,15 +9,14 @@ import {AaveV2Polygon} from 'aave-address-book/AaveV2Polygon.sol';
 import {ICollectorController} from '../../interfaces/v2/ICollectorController.sol';
 import {ILendingPoolConfigurator} from '../../interfaces/v2/ILendingPoolConfigurator.sol';
 
-contract UpgradeV2ATokensPayload {
+contract UpgradeV2ATokensPolygon {
   ILendingPoolConfigurator public immutable POOL_CONFIGURATOR;
   ICollectorController public immutable COLLECTOR_CONTROLLER;
-  address public immutable NEW_COLLECTOR;
+  address public constant NEW_COLLECTOR = 0xe8599F3cc5D38a9aD6F3684cd5CEa72f10Dbc383;
 
-  constructor(address newCollector) public {
+  constructor() public {
     POOL_CONFIGURATOR = ILendingPoolConfigurator(address(AaveV2Polygon.POOL_CONFIGURATOR));
     COLLECTOR_CONTROLLER = ICollectorController(AaveV2Polygon.COLLECTOR_CONTROLLER);
-    NEW_COLLECTOR = newCollector;
   }
 
   function execute() external {

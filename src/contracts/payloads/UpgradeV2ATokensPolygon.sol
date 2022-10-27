@@ -32,7 +32,9 @@ contract UpgradeV2ATokensPolygon {
 
       // send asset to the new collector
       uint256 balance = aToken.balanceOf(AaveV2Polygon.COLLECTOR);
-      COLLECTOR_CONTROLLER.transfer(AaveV2Polygon.COLLECTOR, aToken, NEW_COLLECTOR, balance);
+      if (balance > 0) {
+        COLLECTOR_CONTROLLER.transfer(AaveV2Polygon.COLLECTOR, aToken, NEW_COLLECTOR, balance);
+      }
 
       // update implementation of the aToken and reinit
       ConfiguratorInputTypes.UpdateATokenInput memory input = ConfiguratorInputTypes

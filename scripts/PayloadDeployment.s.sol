@@ -2,8 +2,10 @@
 pragma solidity >=0.8.0;
 
 import 'forge-std/Test.sol';
-import {AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
+import 'forge-std/console.sol';
 import {Script} from 'forge-std/Script.sol';
+
+import {AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
 import {UpgradeAaveCollectorPayloadL1} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL1.sol';
 import {UpgradeAaveCollectorPayloadL2} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL2.sol';
 import {UpgradeCollectorAndATokens} from '../src/contracts/payloads/UpgradeCollectorAndATokens.sol';

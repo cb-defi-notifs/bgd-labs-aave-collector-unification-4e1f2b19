@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
+import {IStreamable} from './IStreamable.sol';
 
-interface ICollector {
+interface ICollector is IStreamable {
   /** @notice Emitted when the funds admin changes
    * @param fundsAdmin The new funds admin
    **/

@@ -5,7 +5,6 @@ import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
 import {SafeERC20} from 'solidity-utils/contracts/oz-common/SafeERC20.sol';
 import {Address} from 'solidity-utils/contracts/oz-common/Address.sol';
 import {ICollector} from '../interfaces/ICollector.sol';
-import {IStreamable} from '../interfaces/IStreamable.sol';
 import {VersionedInitializable} from '../libs/VersionedInitializable.sol';
 import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
 
@@ -22,7 +21,7 @@ import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
  * - Same as with creation, on Sablier the `sender` and `recipient` can cancel a stream. Here, only fund admin and recipient
  * @author BGD Labs
  **/
-contract Collector is VersionedInitializable, ICollector, ReentrancyGuard, IStreamable {
+contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
   using SafeERC20 for IERC20;
 
   /*** Storage Properties ***/

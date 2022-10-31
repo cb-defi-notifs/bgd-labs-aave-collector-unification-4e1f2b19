@@ -8,31 +8,37 @@ import {AaveV2Ethereum} from 'aave-address-book/AaveV2Ethereum.sol';
 import {ProxyHelpers} from 'aave-helpers/ProxyHelpers.sol';
 import {ICollector} from '../src/interfaces/ICollector.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
-import {UpgradeAaveCollectorPayloadL1} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL1.sol';
+import {UpgradeAaveCollectorPayloadL2} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL2.sol';
 import {Collector} from '../src/contracts/Collector.sol';
 import {MockExecutor} from './MockExecutor.sol';
 
-contract UpgradeAaveCollectorPayloadL1Test is Test {
-  UpgradeAaveCollectorPayloadL1 public payload;
+abstract contract BaseL2Test is Test {
+  UpgradeAaveCollectorPayloadL2 public payload;
+  address internal _collector;
+  address internal _newFundsAdmin;
+
   MockExecutor internal _executor;
 
-  function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('ethereum'));
+  function _setUp(
+    address collector,
+    address newFundsAdmin,
+    address aclAdmin
+  ) public {
+    _collector = collector;
+    _newFundsAdmin = newFundsAdmin;
 
-    payload = new UpgradeAaveCollectorPayloadL1();
+    payload = new UpgradeAaveCollectorPayloadL2(collector, newFundsAdmin);
     MockExecutor mockExecutor = new MockExecutor();
-    vm.etch(AaveGovernanceV2.SHORT_EXECUTOR, address(mockExecutor).code);
+    vm.etch(aclAdmin, address(mockExecutor).code);
 
-    _executor = MockExecutor(AaveGovernanceV2.SHORT_EXECUTOR);
+    _executor = MockExecutor(aclAdmin);
   }
 
   function testExecuteAdminAndFundsAdminChanged() public {
     address implBefore = ProxyHelpers.getInitializableAdminUpgradeabilityProxyImplementation(
       vm,
-      AaveV2Ethereum.COLLECTOR
+      _collector
     );
-    ICollector collector = ICollector(AaveV2Ethereum.COLLECTOR);
-    uint256 streamId = collector.getNextStreamId();
 
     // Act
     _executor.execute(address(payload));
@@ -40,17 +46,16 @@ contract UpgradeAaveCollectorPayloadL1Test is Test {
     // Assert
     address implAfter = ProxyHelpers.getInitializableAdminUpgradeabilityProxyImplementation(
       vm,
-      AaveV2Ethereum.COLLECTOR
+      _collector
     );
 
     // implementation should change
     assertTrue(implBefore != implAfter);
 
     // check fundsAdmin = short executor
-    assertEq(collector.getFundsAdmin(), AaveGovernanceV2.SHORT_EXECUTOR);
+    ICollector collector = ICollector(_collector);
+    assertEq(collector.getFundsAdmin(), _newFundsAdmin);
 
-    // check that streamId remained the same
-    assertEq(collector.getNextStreamId(), streamId);
     // we can't check that admin of the proxy is updated, because only the admin can call the admin() method
     // and we do not know the address of the ProxyAdmin contract here
   }

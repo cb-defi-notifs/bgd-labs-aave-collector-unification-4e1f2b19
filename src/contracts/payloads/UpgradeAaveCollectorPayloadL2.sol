@@ -11,11 +11,11 @@ contract UpgradeAaveCollectorPayloadL2 {
   IInitializableAdminUpgradeabilityProxy public immutable COLLECTOR_V3_PROXY;
 
   // short executor or guardian address
-  address public immutable NEW_OWNER;
+  address public immutable NEW_FUNDS_ADMIN;
 
   constructor(address proxy, address newOwner) {
     COLLECTOR_V3_PROXY = IInitializableAdminUpgradeabilityProxy(proxy);
-    NEW_OWNER = newOwner;
+    NEW_FUNDS_ADMIN = newOwner;
   }
 
   function execute() external {
@@ -29,13 +29,13 @@ contract UpgradeAaveCollectorPayloadL2 {
     // Upgrade of both treasuries' implementation
     COLLECTOR_V3_PROXY.upgradeToAndCall(
       address(collector),
-      abi.encodeWithSelector(IStreamable.initialize.selector, NEW_OWNER)
+      abi.encodeWithSelector(IStreamable.initialize.selector, NEW_FUNDS_ADMIN)
     );
 
-    // We initialise the implementation, for security
-    collector.initialize(NEW_OWNER);
+    // // We initialise the implementation, for security
+    collector.initialize(NEW_FUNDS_ADMIN);
 
-    // Update proxy admin
+    // // Update proxy admin
     COLLECTOR_V3_PROXY.changeAdmin(address(proxyAdmin));
   }
 }

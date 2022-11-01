@@ -13,7 +13,6 @@ import {UpgradeCollectorAndATokens} from '../src/contracts/payloads/UpgradeColle
 // artifacts
 string constant upgradeV2TokensAvalancheArtifact = 'out/UpgradeV2ATokensAvalanche.sol/UpgradeV2ATokensAvalanche.json';
 string constant upgradeV2TokensPolygonArtifact = 'out/UpgradeV2ATokensPolygon.sol/UpgradeV2ATokensPolygon.json';
-string constant upgradeCollectorAndATokensArtifact = 'out/UpgradeCollectorAndATokens.sol/UpgradeCollectorAndATokens.json';
 
 contract DeployMainnet is Script {
   function run() external {
@@ -34,18 +33,13 @@ contract DeployPolygon is Test {
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensPolygonArtifact);
     console.log('upgradeV2TokensPolygonImpl:', upgradeV2TokensImpl);
 
-    address payload = deployCode(
-      upgradeCollectorAndATokensArtifact,
-      abi.encode(address(collectorPayload), upgradeV2TokensImpl)
-    );
-
-    console.log('Polygon Payload:', payload);
-
-    new UpgradeCollectorAndATokens(address(collectorPayload), address(0));
+    new UpgradeCollectorAndATokens(address(collectorPayload), upgradeV2TokensImpl);
     vm.stopBroadcast();
   }
 }
 
+// TODO: currently Avalanche v2 Pool Admin is 0x01244E7842254e3FD229CD263472076B1439D1Cd
+// need to be changed to the actual guardian
 contract DeployAvalanche is Test {
   function run() external {
     vm.startBroadcast();
@@ -57,14 +51,7 @@ contract DeployAvalanche is Test {
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensAvalancheArtifact);
     console.log('upgradeV2TokensAvalancheImpl:', upgradeV2TokensImpl);
 
-    address payload = deployCode(
-      upgradeCollectorAndATokensArtifact,
-      abi.encode(address(collectorPayload), upgradeV2TokensImpl)
-    );
-
-    console.log('Avalanche Payload:', payload);
-
-    new UpgradeCollectorAndATokens(address(collectorPayload), address(0));
+    new UpgradeCollectorAndATokens(address(collectorPayload), upgradeV2TokensImpl);
     vm.stopBroadcast();
   }
 }

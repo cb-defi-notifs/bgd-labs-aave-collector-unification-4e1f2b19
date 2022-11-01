@@ -8,29 +8,6 @@ import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitial
 import {MockExecutor} from './MockExecutor.sol';
 import {BaseL2Test} from './BaseL2Test.sol';
 
-// contract ProposalTestPolygon is BaseTest {
-//   function setUp() public {
-//     vm.createSelectFork(vm.rpcUrl('polygon'), 34550201);
-//     _setUp(
-//       AaveV3Polygon.POOL_ADDRESSES_PROVIDER,
-//       AaveV3Polygon.DEFAULT_INCENTIVES_CONTROLLER,
-//       AaveV3Polygon.ACL_ADMIN
-//     );
-//   }
-// }
-
-// contract ProposalTestAvalanche is BaseTest {
-//   address constant A_USDC = 0x625E7708f30cA75bfd92586e17077590C60eb4cD;
-
-//   function setUp() public {
-//     vm.createSelectFork(vm.rpcUrl('avalanche'), 21309814);
-//     _setUp(
-//       AaveV3Avalanche.POOL_ADDRESSES_PROVIDER,
-//       AaveV3Avalanche.DEFAULT_INCENTIVES_CONTROLLER,
-//       AaveV3Avalanche.ACL_ADMIN
-//     );
-//   }
-
 contract ProposalTestOptimism is BaseL2Test {
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('optimism'), 33162240);

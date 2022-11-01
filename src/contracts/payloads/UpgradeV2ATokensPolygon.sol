@@ -3,7 +3,8 @@ pragma experimental ABIEncoderV2;
 pragma solidity >=0.6.0;
 
 import {AToken} from '@aave/core-v2/contracts/protocol/tokenization/AToken.sol';
-import {LendingPoolConfigurator} from '@aave/core-v2/contracts/protocol/lendingpool/LendingPoolConfigurator.sol';
+import {ILendingPool} from '@aave/core-v2/contracts/interfaces/ILendingPool.sol';
+import {IAaveIncentivesController} from '@aave/core-v2/contracts/interfaces/IAaveIncentivesController.sol';
 import {DataTypes, ConfiguratorInputTypes} from 'aave-address-book/AaveV2.sol';
 import {AaveV2Polygon} from 'aave-address-book/AaveV2Polygon.sol';
 import {ICollectorController} from '../../interfaces/v2/ICollectorController.sol';
@@ -49,8 +50,18 @@ contract UpgradeV2ATokensPolygon {
         });
 
       POOL_CONFIGURATOR.updateAToken(input);
-
-      // TODO: init AToken contract with some mock stuff for security reasons
     }
+
+    // initialise aTokenImpl for security reasons
+    aTokenImplementation.initialize(
+      ILendingPool(address(AaveV2Polygon.POOL)),
+      NEW_COLLECTOR,
+      0xD6DF932A45C0f255f85145f286eA0b292B21C90B, // AAVE Token
+      IAaveIncentivesController(0x357D51124f59836DeD84c8a1730D72B749d8BC23),
+      18,
+      'Aave (PoS)',
+      'AAVE',
+      '0x10'
+    );
   }
 }

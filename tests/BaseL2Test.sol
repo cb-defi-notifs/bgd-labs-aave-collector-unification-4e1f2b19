@@ -56,7 +56,10 @@ abstract contract BaseL2Test is Test {
     ICollector collector = ICollector(_collector);
     assertEq(collector.getFundsAdmin(), _newFundsAdmin);
 
-    // we can't check that admin of the proxy is updated, because only the admin can call the admin() method
-    // and we do not know the address of the ProxyAdmin contract here
+    // check that funds admin is not the proxy admin
+    vm.expectRevert();
+    vm.prank(_newFundsAdmin);
+
+    IInitializableAdminUpgradeabilityProxy(_collector).admin();
   }
 }

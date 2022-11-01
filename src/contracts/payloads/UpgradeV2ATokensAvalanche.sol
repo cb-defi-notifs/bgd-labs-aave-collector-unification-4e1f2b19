@@ -3,7 +3,8 @@ pragma experimental ABIEncoderV2;
 pragma solidity >=0.6.0;
 
 import {AToken} from '@aave/core-v2/contracts/protocol/tokenization/AToken.sol';
-import {LendingPoolConfigurator} from '@aave/core-v2/contracts/protocol/lendingpool/LendingPoolConfigurator.sol';
+import {ILendingPool} from '@aave/core-v2/contracts/interfaces/ILendingPool.sol';
+import {IAaveIncentivesController} from '@aave/core-v2/contracts/interfaces/IAaveIncentivesController.sol';
 import {DataTypes, ConfiguratorInputTypes} from 'aave-address-book/AaveV2.sol';
 import {AaveV2Avalanche} from 'aave-address-book/AaveV2Avalanche.sol';
 import {AaveMigrationCollector} from './AaveMigrationCollector.sol';
@@ -51,8 +52,19 @@ contract UpgradeV2ATokensAvalanche {
         });
 
       POOL_CONFIGURATOR.updateAToken(input);
-      // TODO: init AToken contract with some mock stuff for security reasons
     }
+
+    // initialise aTokenImpl for security reasons
+    aTokenImplementation.initialize(
+      ILendingPool(address(AaveV2Avalanche.POOL)),
+      NEW_COLLECTOR,
+      0x63a72806098Bd3D9520cC43356dD78afe5D386D9, // AAVE Token
+      IAaveIncentivesController(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9),
+      18,
+      'Aave Token',
+      'AAVE.e',
+      '0x10'
+    );
   }
 
   // upgrade collector to the new implementation which will transfer all the assets on the init

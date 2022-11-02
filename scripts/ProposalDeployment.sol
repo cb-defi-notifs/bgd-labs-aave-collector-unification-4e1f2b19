@@ -28,7 +28,7 @@ library DeployL1Proposal {
     require(ipfsHash != bytes32(0), "ERROR: IPFS_HASH can't be bytes32(0)");
 
     address[] memory targets = new address[](4);
-    targets[0] = CROSSCHAIN_FORWARDER_POLYGON;
+    targets[0] = l1Payload;
     targets[1] = CROSSCHAIN_FORWARDER_POLYGON;
     targets[2] = CROSSCHAIN_FORWARDER_OPTIMISM;
     targets[3] = CROSSCHAIN_FORWARDER_ARBITRUM;

@@ -5,9 +5,9 @@ import 'forge-std/Test.sol';
 import 'forge-std/console.sol';
 import {Script} from 'forge-std/Script.sol';
 
-import {AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
-import {UpgradeAaveCollectorPayloadL1} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL1.sol';
-import {UpgradeAaveCollectorPayloadL2} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL2.sol';
+import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
+import {AaveGovernanceV2} from 'aave-address-book/AaveGovernanceV2.sol';
+import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAaveCollectorPayload.sol';
 import {UpgradeCollectorAndATokens} from '../src/contracts/payloads/UpgradeCollectorAndATokens.sol';
 
 // artifacts
@@ -17,7 +17,7 @@ string constant upgradeV2TokensPolygonArtifact = 'out/UpgradeV2ATokensPolygon.so
 contract DeployMainnet is Script {
   function run() external {
     vm.startBroadcast();
-    new UpgradeAaveCollectorPayloadL1();
+    new UpgradeAaveCollectorPayload(AaveV2Ethereum.COLLECTOR, AaveGovernanceV2.SHORT_EXECUTOR, 0);
     vm.stopBroadcast();
   }
 }
@@ -25,9 +25,10 @@ contract DeployMainnet is Script {
 contract DeployPolygon is Test {
   function run() external {
     vm.startBroadcast();
-    UpgradeAaveCollectorPayloadL2 collectorPayload = new UpgradeAaveCollectorPayloadL2(
+    UpgradeAaveCollectorPayload collectorPayload = new UpgradeAaveCollectorPayload(
       AaveV3Polygon.COLLECTOR,
-      address(0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772) // Bridge executor
+      address(0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772), // Bridge executor
+      100000
     );
 
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensPolygonArtifact);
@@ -43,9 +44,10 @@ contract DeployPolygon is Test {
 contract DeployAvalanche is Test {
   function run() external {
     vm.startBroadcast();
-    UpgradeAaveCollectorPayloadL2 collectorPayload = new UpgradeAaveCollectorPayloadL2(
+    UpgradeAaveCollectorPayload collectorPayload = new UpgradeAaveCollectorPayload(
       AaveV3Avalanche.COLLECTOR,
-      address(0xa35b76E4935449E33C56aB24b23fcd3246f13470) // Guardian
+      address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Guardian
+      100000
     );
 
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensAvalancheArtifact);
@@ -59,9 +61,10 @@ contract DeployAvalanche is Test {
 contract DeployOptimism is Script {
   function run() external {
     vm.startBroadcast();
-    new UpgradeAaveCollectorPayloadL2(
+    new UpgradeAaveCollectorPayload(
       AaveV3Optimism.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611) // Bridge Executor
+      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611), // Bridge Executor
+      100000
     );
     vm.stopBroadcast();
   }
@@ -70,9 +73,10 @@ contract DeployOptimism is Script {
 contract DeployArbitrum is Script {
   function run() external {
     vm.startBroadcast();
-    new UpgradeAaveCollectorPayloadL2(
+    new UpgradeAaveCollectorPayload(
       AaveV3Arbitrum.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611) // Bridge Executor
+      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611), // Bridge Executor
+      100000
     );
     vm.stopBroadcast();
   }
@@ -81,9 +85,10 @@ contract DeployArbitrum is Script {
 contract DeployFantom is Script {
   function run() external {
     vm.startBroadcast();
-    new UpgradeAaveCollectorPayloadL2(
+    new UpgradeAaveCollectorPayload(
       AaveV3Fantom.COLLECTOR,
-      address(0xf71fc92e2949ccF6A5Fd369a0b402ba80Bc61E02) // Guardian
+      address(0xf71fc92e2949ccF6A5Fd369a0b402ba80Bc61E02), // Guardian
+      100000
     );
     vm.stopBroadcast();
   }
@@ -92,7 +97,7 @@ contract DeployFantom is Script {
 // contract DeployHarmony is Script {
 //   function run() external {
 //     vm.startBroadcast();
-//     new UpgradeAaveCollectorPayloadL2(
+//     new UpgradeAaveCollectorPayload(
 //       AaveV3Harmony.COLLECTOR,
 //       address(0) // Guardian
 //     );

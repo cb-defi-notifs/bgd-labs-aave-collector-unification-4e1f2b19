@@ -60,7 +60,7 @@ contract CollectorTest is Test {
     vm.createSelectFork(vm.rpcUrl('polygon'));
 
     collector = new Collector();
-    collector.initialize(address(this));
+    collector.initialize(address(this), 100000);
     deal(address(AAVE), address(collector), 10 ether);
 
     streamStartTime = block.timestamp + 10;

@@ -8,37 +8,46 @@ import {AaveV2Ethereum} from 'aave-address-book/AaveV2Ethereum.sol';
 import {ProxyHelpers} from 'aave-helpers/ProxyHelpers.sol';
 import {ICollector} from '../src/interfaces/ICollector.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
-import {UpgradeAaveCollectorPayloadL2} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL2.sol';
+import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAaveCollectorPayload.sol';
 import {Collector} from '../src/contracts/Collector.sol';
 import {MockExecutor} from './MockExecutor.sol';
 
-abstract contract BaseL2Test is Test {
-  UpgradeAaveCollectorPayloadL2 public payload;
+abstract contract BaseTest is Test {
+  UpgradeAaveCollectorPayload public payload;
   address internal _collector;
   address internal _newFundsAdmin;
+  uint256 internal _streamId;
 
   MockExecutor internal _executor;
 
   function _setUp(
     address collector,
     address newFundsAdmin,
+    uint256 streamId,
     address aclAdmin
   ) public {
     _collector = collector;
     _newFundsAdmin = newFundsAdmin;
+    _streamId = streamId;
 
-    payload = new UpgradeAaveCollectorPayloadL2(collector, newFundsAdmin);
+    payload = new UpgradeAaveCollectorPayload(collector, newFundsAdmin, streamId);
     MockExecutor mockExecutor = new MockExecutor();
     vm.etch(aclAdmin, address(mockExecutor).code);
 
     _executor = MockExecutor(aclAdmin);
   }
 
-  function testExecuteAdminAndFundsAdminChanged() public {
+  function testExecuteProxyAdminAndFundsAdminChanged() public {
+    ICollector collector = ICollector(_collector);
     address implBefore = ProxyHelpers.getInitializableAdminUpgradeabilityProxyImplementation(
       vm,
       _collector
     );
+
+    uint256 currentStreamId;
+    if (_streamId == 0) {
+      currentStreamId = collector.getNextStreamId();
+    }
 
     // Act
     _executor.execute(address(payload));
@@ -53,7 +62,6 @@ abstract contract BaseL2Test is Test {
     assertTrue(implBefore != implAfter);
 
     // check fundsAdmin = short executor
-    ICollector collector = ICollector(_collector);
     assertEq(collector.getFundsAdmin(), _newFundsAdmin);
 
     // check that funds admin is not the proxy admin
@@ -61,5 +69,13 @@ abstract contract BaseL2Test is Test {
     vm.prank(_newFundsAdmin);
 
     IInitializableAdminUpgradeabilityProxy(_collector).admin();
+
+    // check that stream id is set or not modified
+    uint256 newStreamId = collector.getNextStreamId();
+    if (_streamId > 0) {
+      assertEq(newStreamId, _streamId);
+    } else {
+      assertEq(newStreamId, currentStreamId);
+    }
   }
 }

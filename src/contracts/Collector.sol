@@ -82,8 +82,12 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
 
   /*** Contract Logic Starts Here */
 
-  function initialize(address fundsAdmin) external initializer {
-    _nextStreamId = 100000;
+  /// @inheritdoc ICollector
+  function initialize(address fundsAdmin, uint256 nextStreamId) external initializer {
+    if (nextStreamId > 0) {
+      _nextStreamId = nextStreamId;
+    }
+
     _setFundsAdmin(fundsAdmin);
   }
 
@@ -102,10 +106,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
     return _fundsAdmin;
   }
 
-  /**
-   * @notice Returns the next available stream id
-   * @return nextStreamId Returns the stream id.
-   */
+  /// @inheritdoc ICollector
   function getNextStreamId() external view returns (uint256) {
     return _nextStreamId;
   }

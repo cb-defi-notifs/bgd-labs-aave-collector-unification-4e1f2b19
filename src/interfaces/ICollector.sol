@@ -71,8 +71,9 @@ interface ICollector {
 
   /** @notice Initializes the contracts
    * @param fundsAdmin Funds admin address
+   * @param nextStreamId StreamId to set, applied if greater than 0
    **/
-  function initialize(address fundsAdmin) external;
+  function initialize(address fundsAdmin, uint256 nextStreamId) external;
 
   /**
    * @notice Return the funds admin, only entity to be able to interact with this contract (controller of reserve)

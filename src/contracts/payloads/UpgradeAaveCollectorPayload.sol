@@ -6,16 +6,24 @@ import {Collector} from '../Collector.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../../interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 import {ICollector} from '../../interfaces/ICollector.sol';
 
-contract UpgradeAaveCollectorPayloadL2 {
+contract UpgradeAaveCollectorPayload {
   // v3 collector proxy address
-  IInitializableAdminUpgradeabilityProxy public immutable COLLECTOR_V3_PROXY;
+  IInitializableAdminUpgradeabilityProxy public immutable COLLECTOR_PROXY;
 
   // short executor or guardian address
   address public immutable NEW_FUNDS_ADMIN;
 
-  constructor(address proxy, address newFundsAdmin) {
-    COLLECTOR_V3_PROXY = IInitializableAdminUpgradeabilityProxy(proxy);
+  // streamId
+  uint256 public immutable STREAM_ID;
+
+  constructor(
+    address proxy,
+    address newFundsAdmin,
+    uint256 streamId
+  ) {
+    COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxy(proxy);
     NEW_FUNDS_ADMIN = newFundsAdmin;
+    STREAM_ID = streamId;
   }
 
   function execute() external {
@@ -26,16 +34,16 @@ contract UpgradeAaveCollectorPayloadL2 {
     // Deploy new collector
     Collector collector = new Collector();
 
-    // Upgrade of both treasuries' implementation
-    COLLECTOR_V3_PROXY.upgradeToAndCall(
+    // Upgrade of collector implementation
+    COLLECTOR_PROXY.upgradeToAndCall(
       address(collector),
-      abi.encodeWithSelector(ICollector.initialize.selector, NEW_FUNDS_ADMIN)
+      abi.encodeWithSelector(ICollector.initialize.selector, NEW_FUNDS_ADMIN, STREAM_ID)
     );
 
     // // We initialise the implementation, for security
-    collector.initialize(NEW_FUNDS_ADMIN);
+    collector.initialize(NEW_FUNDS_ADMIN, STREAM_ID);
 
     // // Update proxy admin
-    COLLECTOR_V3_PROXY.changeAdmin(address(proxyAdmin));
+    COLLECTOR_PROXY.changeAdmin(address(proxyAdmin));
   }
 }

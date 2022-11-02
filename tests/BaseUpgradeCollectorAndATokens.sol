@@ -10,7 +10,7 @@ import {ProxyHelpers} from 'aave-helpers/ProxyHelpers.sol';
 import {ICollector} from '../src/interfaces/ICollector.sol';
 import {IAToken} from '../src/interfaces/IAToken.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
-import {UpgradeAaveCollectorPayloadL2} from '../src/contracts/payloads/UpgradeAaveCollectorPayloadL2.sol';
+import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAaveCollectorPayload.sol';
 import {UpgradeCollectorAndATokens} from '../src/contracts/payloads/UpgradeCollectorAndATokens.sol';
 import {Collector} from '../src/contracts/Collector.sol';
 import {MockExecutor} from './MockExecutor.sol';
@@ -37,9 +37,10 @@ abstract contract BaseUpgradeCollectorAndATokens is Test {
     _collector = collector;
     _newFundsAdmin = newFundsAdmin;
 
-    UpgradeAaveCollectorPayloadL2 upgradeCollectorPayload = new UpgradeAaveCollectorPayloadL2(
+    UpgradeAaveCollectorPayload upgradeCollectorPayload = new UpgradeAaveCollectorPayload(
       collector,
-      newFundsAdmin
+      newFundsAdmin,
+      100000
     );
 
     address upgradeV2TokensImpl = deployCode(upgradeATokensArtifact);

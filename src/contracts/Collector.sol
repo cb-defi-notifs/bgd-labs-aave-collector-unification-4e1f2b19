@@ -104,7 +104,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
 
   /**
    * @notice Returns the next available stream id
-   * @notice Returns the stream id.
+   * @return nextStreamId Returns the stream id.
    */
   function getNextStreamId() external view returns (uint256) {
     return _nextStreamId;
@@ -257,7 +257,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
 
     _nextStreamId = streamId;
 
-    emit StreamIdChanged(streamId);
+    // emit StreamIdChanged(streamId);
   }
 
   /**
@@ -278,7 +278,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
    * @param tokenAddress The ERC20 token to use as streaming currency.
    * @param startTime The unix timestamp for when the stream starts.
    * @param stopTime The unix timestamp for when the stream stops.
-   * @notice Returns the uint256 id of the newly created stream.
+   * @return streamId the uint256 id of the newly created stream.
    */
   function createStream(
     address recipient,
@@ -342,6 +342,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
    *  Throws if there is a token transfer failure.
    * @param streamId The id of the stream to withdraw tokens from.
    * @param amount The amount of tokens to withdraw.
+   * @return bool Returns true if successful.
    */
   function withdrawFromStream(uint256 streamId, uint256 amount)
     external
@@ -371,7 +372,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
    *  Throws if the caller is not the funds admin or the recipient of the stream.
    *  Throws if there is a token transfer failure.
    * @param streamId The id of the stream to cancel.
-   * @notice Returns bool true=success, otherwise false.
+   * @return bool Returns true if successful.
    */
   function cancelStream(uint256 streamId)
     external

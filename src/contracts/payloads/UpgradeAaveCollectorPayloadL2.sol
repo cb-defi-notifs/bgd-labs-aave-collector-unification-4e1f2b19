@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {ProxyAdmin} from 'solidity-utils/contracts/transparent-proxy/ProxyAdmin.sol';
 import {Collector} from '../Collector.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../../interfaces/IInitializableAdminUpgradeabilityProxy.sol';
-import {IStreamable} from '../../interfaces/IStreamable.sol';
+import {ICollector} from '../../interfaces/ICollector.sol';
 
 contract UpgradeAaveCollectorPayloadL2 {
   // v3 collector proxy address
@@ -13,9 +13,9 @@ contract UpgradeAaveCollectorPayloadL2 {
   // short executor or guardian address
   address public immutable NEW_FUNDS_ADMIN;
 
-  constructor(address proxy, address newOwner) {
+  constructor(address proxy, address newFundsAdmin) {
     COLLECTOR_V3_PROXY = IInitializableAdminUpgradeabilityProxy(proxy);
-    NEW_FUNDS_ADMIN = newOwner;
+    NEW_FUNDS_ADMIN = newFundsAdmin;
   }
 
   function execute() external {
@@ -29,7 +29,7 @@ contract UpgradeAaveCollectorPayloadL2 {
     // Upgrade of both treasuries' implementation
     COLLECTOR_V3_PROXY.upgradeToAndCall(
       address(collector),
-      abi.encodeWithSelector(IStreamable.initialize.selector, NEW_FUNDS_ADMIN)
+      abi.encodeWithSelector(ICollector.initialize.selector, NEW_FUNDS_ADMIN)
     );
 
     // // We initialise the implementation, for security

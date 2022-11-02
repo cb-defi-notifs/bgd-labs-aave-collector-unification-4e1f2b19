@@ -2,18 +2,77 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
-import {IStreamable} from './IStreamable.sol';
 
-interface ICollector is IStreamable {
+interface ICollector {
+  struct Stream {
+    uint256 deposit;
+    uint256 ratePerSecond;
+    uint256 remainingBalance;
+    uint256 startTime;
+    uint256 stopTime;
+    address recipient;
+    address sender;
+    address tokenAddress;
+    bool isEntity;
+  }
+
   /** @notice Emitted when the funds admin changes
-   * @param fundsAdmin The new funds admin
+   * @param fundsAdmin The new funds admin.
    **/
   event NewFundsAdmin(address indexed fundsAdmin);
+
+  /** @notice Emitted when the new stream is created
+   * @param streamId The identifier of the stream.
+   * @param sender The address of the collector.
+   * @param recipient The address towards which the money is streamed.
+   * @param deposit The amount of money to be streamed.
+   * @param tokenAddress The ERC20 token to use as streaming currency.
+   * @param startTime The unix timestamp for when the stream starts.
+   * @param stopTime The unix timestamp for when the stream stops.
+   **/
+  event CreateStream(
+    uint256 indexed streamId,
+    address indexed sender,
+    address indexed recipient,
+    uint256 deposit,
+    address tokenAddress,
+    uint256 startTime,
+    uint256 stopTime
+  );
+
+  /**
+   * @notice Emmitted when withdraw happens from the contract to the recipient's account.
+   * @param streamId The id of the stream to withdraw tokens from.
+   * @param recipient The address towards which the money is streamed.
+   * @param amount The amount of tokens to withdraw.
+   */
+  event WithdrawFromStream(uint256 indexed streamId, address indexed recipient, uint256 amount);
+
+  /**
+   * @notice Emmitted when the stream is canceled.
+   * @param streamId The id of the stream to withdraw tokens from.
+   * @param sender The address of the collector.
+   * @param recipient The address towards which the money is streamed.
+   * @param senderBalance The sender's balance at the moment of cancelling.
+   * @param recipientBalance The recipient's balance at the moment of cancelling.
+   */
+  event CancelStream(
+    uint256 indexed streamId,
+    address indexed sender,
+    address indexed recipient,
+    uint256 senderBalance,
+    uint256 recipientBalance
+  );
 
   /** @notice Returns the mock ETH reference address
    * @return address The address
    **/
   function ETH_MOCK_ADDRESS() external pure returns (address);
+
+  /** @notice Initializes the contracts
+   * @param fundsAdmin Funds admin address
+   **/
+  function initialize(address fundsAdmin) external;
 
   /**
    * @notice Return the funds admin, only entity to be able to interact with this contract (controller of reserve)
@@ -51,4 +110,44 @@ interface ICollector is IStreamable {
    * @param admin The address of the new funds administrator
    */
   function setFundsAdmin(address admin) external;
+
+  /**
+   * @notice Creates a new stream funded by this contracts itself and paid towards `recipient`.
+   * @param recipient The address towards which the money is streamed.
+   * @param deposit The amount of money to be streamed.
+   * @param tokenAddress The ERC20 token to use as streaming currency.
+   * @param startTime The unix timestamp for when the stream starts.
+   * @param stopTime The unix timestamp for when the stream stops.
+   * @return streamId the uint256 id of the newly created stream.
+   */
+  function createStream(
+    address recipient,
+    uint256 deposit,
+    address tokenAddress,
+    uint256 startTime,
+    uint256 stopTime
+  ) external returns (uint256 streamId);
+
+  /**
+   * @notice Withdraws from the contract to the recipient's account.
+   * @param streamId The id of the stream to withdraw tokens from.
+   * @param amount The amount of tokens to withdraw.
+   * @return bool Returns true if successful.
+   */
+  function withdrawFromStream(uint256 streamId, uint256 amount) external returns (bool);
+
+  /**
+   * @notice Cancels the stream and transfers the tokens back on a pro rata basis.
+   * @param streamId The id of the stream to cancel.
+   * @return bool Returns true if successful.
+   */
+  function cancelStream(uint256 streamId) external returns (bool);
+
+  /**
+   * @notice Returns the next available stream id
+   * @return nextStreamId Returns the stream id.
+   */
+  function getNextStreamId() external view returns (uint256);
+
+  function setNextStreamId(uint256 streamId) external;
 }

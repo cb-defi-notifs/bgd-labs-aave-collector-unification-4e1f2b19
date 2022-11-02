@@ -9,11 +9,9 @@ import {Collector} from '../src/contracts/Collector.sol';
 contract CollectorTest is Test {
   Collector public collector;
 
-  IERC20 public constant AAVE =
-    IERC20(0xD6DF932A45C0f255f85145f286eA0b292B21C90B);
+  IERC20 public constant AAVE = IERC20(0xD6DF932A45C0f255f85145f286eA0b292B21C90B);
 
-  address public constant RECIPIENT_STREAM_1 =
-    0xd3B5A38aBd16e2636F1e94D1ddF0Ffb4161D5f10;
+  address public constant RECIPIENT_STREAM_1 = 0xd3B5A38aBd16e2636F1e94D1ddF0Ffb4161D5f10;
 
   uint256 public streamStartTime;
   uint256 public streamStopTime;
@@ -40,11 +38,7 @@ contract CollectorTest is Test {
     uint256 recipientBalance
   );
 
-  event WithdrawFromStream(
-    uint256 indexed streamId,
-    address indexed recipient,
-    uint256 amount
-  );
+  event WithdrawFromStream(uint256 indexed streamId, address indexed recipient, uint256 amount);
 
   error Create_InvalidStreamId(uint256 id);
   error Create_InvalidSender(address sender);
@@ -60,10 +54,7 @@ contract CollectorTest is Test {
   error Withdraw_WrongRecipientBalance(uint256 current, uint256 expected);
   error Withdraw_WrongRecipientBalanceStream(uint256 current, uint256 expected);
   error Withdraw_WrongEcoReserveBalance(uint256 current, uint256 expected);
-  error Withdraw_WrongEcoReserveBalanceStream(
-    uint256 current,
-    uint256 expected
-  );
+  error Withdraw_WrongEcoReserveBalanceStream(uint256 current, uint256 expected);
 
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('polygon'));
@@ -121,39 +112,14 @@ contract CollectorTest is Test {
     collector.transfer(AAVE, address(112), 1 ether);
   }
 
+  //
   // Tests for streams
+  //
 
   function testGetNextStreamId() public {
     uint256 streamId = collector.getNextStreamId();
     assertEq(streamId, 100000);
   }
-
-  function testSetNextStreamId() public {
-    vm.expectEmit(true, false, false, true);
-    emit StreamIdChanged(123456);
-
-    collector.setNextStreamId(123456);
-
-    uint256 streamId = collector.getNextStreamId();
-    assertEq(streamId, 123456);
-  }
-
-  function testSetNextStreamIdWhenInvalid() public {
-    vm.expectRevert(bytes('stream id is invalid'));
-
-    collector.setNextStreamId(1);
-  }
-
-  function testSetNextStreamIdWhenNotFundsAdmin() public {
-    vm.expectRevert(bytes('ONLY_BY_FUNDS_ADMIN'));
-    vm.prank(address(0));
-
-    collector.setNextStreamId(123456);
-  }
-
-  //
-  // Tests for streams
-  //
 
   function testGetNotExistingStream() public {
     vm.expectRevert(bytes('stream does not exist'));
@@ -214,13 +180,7 @@ contract CollectorTest is Test {
   function testCreateStreamWhenRecipientIsZero() public {
     vm.expectRevert(bytes('stream to the zero address'));
 
-    collector.createStream(
-      address(0),
-      6 ether,
-      address(AAVE),
-      streamStartTime,
-      streamStopTime
-    );
+    collector.createStream(address(0), 6 ether, address(AAVE), streamStartTime, streamStopTime);
   }
 
   function testCreateStreamWhenRecipientIsCollector() public {
@@ -238,13 +198,7 @@ contract CollectorTest is Test {
   function testCreateStreamWhenRecipientIsTheCaller() public {
     vm.expectRevert(bytes('stream to the caller'));
 
-    collector.createStream(
-      address(this),
-      6 ether,
-      address(AAVE),
-      streamStartTime,
-      streamStopTime
-    );
+    collector.createStream(address(this), 6 ether, address(AAVE), streamStartTime, streamStopTime);
   }
 
   function testCreateStreamWhenDepositIsZero() public {
@@ -291,15 +245,9 @@ contract CollectorTest is Test {
     vm.warp(block.timestamp + 20);
 
     uint256 balanceRecipientBefore = AAVE.balanceOf(RECIPIENT_STREAM_1);
-    uint256 balanceRecipientStreamBefore = collector.balanceOf(
-      streamId,
-      RECIPIENT_STREAM_1
-    );
+    uint256 balanceRecipientStreamBefore = collector.balanceOf(streamId, RECIPIENT_STREAM_1);
     uint256 balanceCollectorBefore = AAVE.balanceOf(address(collector));
-    uint256 balanceCollectorStreamBefore = collector.balanceOf(
-      streamId,
-      address(collector)
-    );
+    uint256 balanceCollectorStreamBefore = collector.balanceOf(streamId, address(collector));
 
     vm.expectEmit(true, true, true, true);
     emit WithdrawFromStream(streamId, RECIPIENT_STREAM_1, 1 ether);
@@ -309,21 +257,12 @@ contract CollectorTest is Test {
 
     // Assert
     uint256 balanceRecipientAfter = AAVE.balanceOf(RECIPIENT_STREAM_1);
-    uint256 balanceRecipientStreamAfter = collector.balanceOf(
-      streamId,
-      RECIPIENT_STREAM_1
-    );
+    uint256 balanceRecipientStreamAfter = collector.balanceOf(streamId, RECIPIENT_STREAM_1);
     uint256 balanceCollectorAfter = AAVE.balanceOf(address(collector));
-    uint256 balanceCollectorStreamAfter = collector.balanceOf(
-      streamId,
-      address(collector)
-    );
+    uint256 balanceCollectorStreamAfter = collector.balanceOf(streamId, address(collector));
 
     assertEq(balanceRecipientAfter, balanceRecipientBefore + 1 ether);
-    assertEq(
-      balanceRecipientStreamAfter,
-      balanceRecipientStreamBefore - 1 ether
-    );
+    assertEq(balanceRecipientStreamAfter, balanceRecipientStreamBefore - 1 ether);
     assertEq(balanceCollectorAfter, balanceCollectorBefore - 1 ether);
     assertEq(balanceCollectorStreamAfter, balanceCollectorStreamBefore);
   }
@@ -363,9 +302,7 @@ contract CollectorTest is Test {
   function testWithdrawFromStreamWhenNotAdminOrRecipient() public {
     uint256 streamId = createStream();
 
-    vm.expectRevert(
-      bytes('caller is not the funds admin or the recipient of the stream')
-    );
+    vm.expectRevert(bytes('caller is not the funds admin or the recipient of the stream'));
     vm.prank(address(0));
 
     collector.withdrawFromStream(streamId, 1 ether);
@@ -401,13 +338,7 @@ contract CollectorTest is Test {
     uint256 balanceRecipientBefore = AAVE.balanceOf(RECIPIENT_STREAM_1);
 
     vm.expectEmit(true, true, true, true);
-    emit CancelStream(
-      streamId,
-      address(collector),
-      RECIPIENT_STREAM_1,
-      6 ether,
-      0
-    );
+    emit CancelStream(streamId, address(collector), RECIPIENT_STREAM_1, 6 ether, 0);
 
     // Act
     collector.cancelStream(streamId);
@@ -428,13 +359,7 @@ contract CollectorTest is Test {
     vm.warp(block.timestamp + 20);
 
     vm.expectEmit(true, true, true, true);
-    emit CancelStream(
-      streamId,
-      address(collector),
-      RECIPIENT_STREAM_1,
-      5 ether,
-      1 ether
-    );
+    emit CancelStream(streamId, address(collector), RECIPIENT_STREAM_1, 5 ether, 1 ether);
 
     // Act
     collector.cancelStream(streamId);
@@ -456,9 +381,7 @@ contract CollectorTest is Test {
   function testCancelStreamWhenNotAdminOrRecipient() public {
     uint256 streamId = createStream();
 
-    vm.expectRevert(
-      bytes('caller is not the funds admin or the recipient of the stream')
-    );
+    vm.expectRevert(bytes('caller is not the funds admin or the recipient of the stream'));
     vm.prank(address(0));
 
     collector.cancelStream(streamId);

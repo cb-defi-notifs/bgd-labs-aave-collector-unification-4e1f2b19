@@ -8,7 +8,6 @@ import {Script} from 'forge-std/Script.sol';
 import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
 import {AaveGovernanceV2} from 'aave-address-book/AaveGovernanceV2.sol';
 import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAaveCollectorPayload.sol';
-import {UpgradeCollectorAndATokens} from '../src/contracts/payloads/UpgradeCollectorAndATokens.sol';
 
 // artifacts
 string constant upgradeV2TokensAvalancheArtifact = 'out/UpgradeV2ATokensAvalanche.sol/UpgradeV2ATokensAvalanche.json';
@@ -25,7 +24,7 @@ contract DeployMainnet is Script {
 contract DeployPolygon is Test {
   function run() external {
     vm.startBroadcast();
-    UpgradeAaveCollectorPayload collectorPayload = new UpgradeAaveCollectorPayload(
+    new UpgradeAaveCollectorPayload(
       AaveV3Polygon.COLLECTOR,
       address(0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772), // Bridge executor
       100000
@@ -34,7 +33,6 @@ contract DeployPolygon is Test {
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensPolygonArtifact);
     console.log('upgradeV2TokensPolygonImpl:', upgradeV2TokensImpl);
 
-    new UpgradeCollectorAndATokens(address(collectorPayload), upgradeV2TokensImpl);
     vm.stopBroadcast();
   }
 }
@@ -44,7 +42,7 @@ contract DeployPolygon is Test {
 contract DeployAvalanche is Test {
   function run() external {
     vm.startBroadcast();
-    UpgradeAaveCollectorPayload collectorPayload = new UpgradeAaveCollectorPayload(
+    new UpgradeAaveCollectorPayload(
       AaveV3Avalanche.COLLECTOR,
       address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Guardian
       100000
@@ -53,7 +51,6 @@ contract DeployAvalanche is Test {
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensAvalancheArtifact);
     console.log('upgradeV2TokensAvalancheImpl:', upgradeV2TokensImpl);
 
-    new UpgradeCollectorAndATokens(address(collectorPayload), upgradeV2TokensImpl);
     vm.stopBroadcast();
   }
 }

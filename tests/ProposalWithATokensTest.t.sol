@@ -6,12 +6,12 @@ import {AaveV2Polygon, AaveV3Polygon, AaveV3Avalanche} from 'aave-address-book/A
 import {ProxyHelpers} from 'aave-helpers/ProxyHelpers.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 import {MockExecutor} from './MockExecutor.sol';
-import {BaseUpgradeCollectorAndATokens} from './BaseUpgradeCollectorAndATokens.sol';
+import {BaseUpgradeCollectorAndATokensTest} from './BaseUpgradeCollectorAndATokensTest.sol';
 
 string constant upgradeV2TokensAvalancheArtifact = 'out/UpgradeV2ATokensAvalanche.sol/UpgradeV2ATokensAvalanche.json';
 string constant upgradeV2TokensPolygonArtifact = 'out/UpgradeV2ATokensPolygon.sol/UpgradeV2ATokensPolygon.json';
 
-contract ProposalTestPolygon is BaseUpgradeCollectorAndATokens {
+contract ProposalTestPolygon is BaseUpgradeCollectorAndATokensTest {
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('polygon'), 34550201);
     _setUp(

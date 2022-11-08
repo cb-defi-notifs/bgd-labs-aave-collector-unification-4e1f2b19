@@ -15,7 +15,7 @@ import {UpgradeCollectorAndATokens} from '../src/contracts/payloads/UpgradeColle
 import {Collector} from '../src/contracts/Collector.sol';
 import {MockExecutor} from './MockExecutor.sol';
 
-abstract contract BaseUpgradeCollectorAndATokens is Test {
+abstract contract BaseUpgradeCollectorAndATokensTest is Test {
   UpgradeCollectorAndATokens public payload;
   ILendingPool internal _v2pool;
   address internal _v2collector;

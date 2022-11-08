@@ -12,6 +12,8 @@ import {VersionedInitializable} from '../../interfaces/v2/VersionedInitializable
 contract AaveMigrationCollector is VersionedInitializable {
   uint256 public constant REVISION = 2;
 
+  address public RECIPIENT;
+
   /**
    * @dev returns the revision of the implementation contract
    */
@@ -20,15 +22,32 @@ contract AaveMigrationCollector is VersionedInitializable {
   }
 
   /**
+   * @dev returns the recipient collector
+   */
+  function getRecipient() internal view returns (address) {
+    return RECIPIENT;
+  }
+
+  /**
    * @dev initializes the contract upon assignment to the InitializableAdminUpgradeabilityProxy
    * migrates all the assets to the new controller
    */
-  function initialize(address[] calldata assets, address recepient) external initializer {
+  function initialize(address[] calldata assets, address recipient) external initializer {
+    RECIPIENT = recipient;
+
+    transferToRecipient(assets);
+  }
+
+  /**
+   * @dev initializes the contract upon assignment to the InitializableAdminUpgradeabilityProxy
+   * migrates all the assets to the new controller
+   */
+  function transferToRecipient(address[] calldata assets) public {
     for (uint256 i = 0; i < assets.length; i++) {
       IERC20 token = IERC20(assets[i]);
       uint256 balance = token.balanceOf(address(this));
       if (balance > 0) {
-        token.transfer(recepient, balance);
+        token.transfer(RECIPIENT, balance);
       }
     }
   }

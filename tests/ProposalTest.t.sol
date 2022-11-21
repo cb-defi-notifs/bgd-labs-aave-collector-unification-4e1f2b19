@@ -16,8 +16,32 @@ contract ProposalTestMainnet is BaseTest {
     _setUp(
       AaveV2Ethereum.COLLECTOR,
       address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611),
-      100000,
+      0,
       AaveGovernanceV2.SHORT_EXECUTOR
+    );
+  }
+}
+
+contract ProposalTestPolygon is BaseTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('polygon'), 34550201);
+    _setUp(
+      AaveV3Polygon.COLLECTOR,
+      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611),
+      100000,
+      AaveV3Polygon.ACL_ADMIN
+    );
+  }
+}
+
+contract ProposalTestAvalanche is BaseTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('avalanche'), 21815137);
+    _setUp(
+      AaveV3Avalanche.COLLECTOR,
+      address(0xa35b76E4935449E33C56aB24b23fcd3246f13470),
+      100000,
+      AaveV3Avalanche.ACL_ADMIN
     );
   }
 }

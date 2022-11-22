@@ -5,64 +5,38 @@ import 'forge-std/console.sol';
 import {Script} from 'forge-std/Script.sol';
 import {AaveGovernanceV2, IExecutorWithTimelock} from 'aave-address-book/AaveGovernanceV2.sol';
 
+struct PayloadData {
+  address target;
+  uint256 value;
+  string signature;
+  bytes calldatas;
+  bool withDelegateCall;
+}
+
+address constant CROSSCHAIN_FORWARDER_ARBITRUM = address(0); // TODO: place right address
+
 library DeployL1Proposal {
-  address internal constant CROSSCHAIN_FORWARDER_POLYGON =
-    0x158a6bC04F0828318821baE797f50B0A1299d45b;
-
-  address internal constant CROSSCHAIN_FORWARDER_OPTIMISM =
-    0x5f5C02875a8e9B5A26fbd09040ABCfDeb2AA6711;
-
-  address internal constant CROSSCHAIN_FORWARDER_ARBITRUM = address(0); // TODO: place right address
-
-  function _deployL1Proposal(
-    address l1Payload,
-    address polygonPayload,
-    address polygonATokensPayload,
-    address optimismPayload,
-    address arbitrumPayload,
-    bytes32 ipfsHash
-  ) internal returns (uint256 proposalId) {
-    require(l1Payload != address(0), "ERROR: L1_PAYLOAD can't be address(0)");
-    require(polygonPayload != address(0), "ERROR: L2_PAYLOAD can't be address(0)");
-    require(polygonATokensPayload != address(0), "ERROR: L2_PAYLOAD can't be address(0)");
-    require(optimismPayload != address(0), "ERROR: L2_PAYLOAD can't be address(0)");
-    require(arbitrumPayload != address(0), "ERROR: L2_PAYLOAD can't be address(0)");
+  function _deployL1Proposal(PayloadData[] memory payloadData, bytes32 ipfsHash)
+    internal
+    returns (uint256 proposalId)
+  {
     require(ipfsHash != bytes32(0), "ERROR: IPFS_HASH can't be bytes32(0)");
 
-    address[] memory targets = new address[](5);
-    targets[0] = l1Payload;
-    targets[1] = CROSSCHAIN_FORWARDER_POLYGON;
-    targets[2] = CROSSCHAIN_FORWARDER_POLYGON;
-    targets[3] = CROSSCHAIN_FORWARDER_OPTIMISM;
-    targets[4] = CROSSCHAIN_FORWARDER_ARBITRUM;
+    address[] memory targets = new address[](payloadData.length);
+    uint256[] memory values = new uint256[](payloadData.length);
+    string[] memory signatures = new string[](payloadData.length);
+    bytes[] memory calldatas = new bytes[](payloadData.length);
+    bool[] memory withDelegateCalls = new bool[](payloadData.length);
 
-    uint256[] memory values = new uint256[](5);
-    values[0] = 0;
-    values[1] = 0;
-    values[2] = 0;
-    values[3] = 0;
-    values[4] = 0;
+    for (uint256 i; i < payloadData.length; ++i) {
+      require(payloadData[i].target != address(0), "ERROR: PAYLOAD can't be address(0)");
 
-    string[] memory signatures = new string[](5);
-    signatures[0] = 'execute()';
-    signatures[1] = 'execute(address)';
-    signatures[2] = 'execute(address)';
-    signatures[3] = 'execute(address)';
-    signatures[4] = 'execute(address)';
-
-    bytes[] memory calldatas = new bytes[](5);
-    calldatas[0] = '';
-    calldatas[1] = abi.encode(polygonPayload);
-    calldatas[2] = abi.encode(polygonATokensPayload);
-    calldatas[3] = abi.encode(optimismPayload);
-    calldatas[4] = abi.encode(arbitrumPayload);
-
-    bool[] memory withDelegatecalls = new bool[](5);
-    withDelegatecalls[0] = true;
-    withDelegatecalls[1] = true;
-    withDelegatecalls[2] = true;
-    withDelegatecalls[3] = true;
-    withDelegatecalls[4] = true;
+      targets[i] = payloadData[i].target;
+      values[i] = payloadData[i].value;
+      signatures[i] = payloadData[i].signature;
+      calldatas[i] = payloadData[i].calldatas;
+      withDelegateCalls[i] = payloadData[i].withDelegateCall;
+    }
 
     return
       AaveGovernanceV2.GOV.create(
@@ -71,7 +45,7 @@ library DeployL1Proposal {
         values,
         signatures,
         calldatas,
-        withDelegatecalls,
+        withDelegateCalls,
         ipfsHash
       );
   }
@@ -81,14 +55,54 @@ library DeployL1Proposal {
 contract ProposalDeployment is Script {
   function run() external {
     vm.startBroadcast();
-    DeployL1Proposal._deployL1Proposal(
-      address(0), // l1 payload
-      address(0), // polygonPayload
-      address(0), // polygonATokensPayload
-      address(0), // optimismPayload
-      address(0), // arbitrumPayload
-      bytes32(0)
-    );
+
+    PayloadData[] memory payloadData = new PayloadData[](5);
+
+    payloadData[0] = PayloadData({
+      target: address(0),
+      value: 0,
+      signature: 'execute()',
+      calldatas: '',
+      withDelegateCall: true
+    });
+
+    address polygonPayload = address(0);
+    payloadData[1] = PayloadData({
+      target: AaveGovernanceV2.CROSSCHAIN_FORWARDER_POLYGON,
+      value: 0,
+      signature: 'execute(address)',
+      calldatas: abi.encode(polygonPayload),
+      withDelegateCall: true
+    });
+
+    address polygonATokensPayload = address(0);
+    payloadData[2] = PayloadData({
+      target: AaveGovernanceV2.CROSSCHAIN_FORWARDER_POLYGON,
+      value: 0,
+      signature: 'execute(address)',
+      calldatas: abi.encode(polygonATokensPayload),
+      withDelegateCall: true
+    });
+
+    address optimismPayload = address(0);
+    payloadData[3] = PayloadData({
+      target: AaveGovernanceV2.CROSSCHAIN_FORWARDER_OPTIMISM,
+      value: 0,
+      signature: 'execute(address)',
+      calldatas: abi.encode(optimismPayload),
+      withDelegateCall: true
+    });
+
+    address arbitrumPayload = address(0);
+    payloadData[4] = PayloadData({
+      target: CROSSCHAIN_FORWARDER_ARBITRUM,
+      value: 0,
+      signature: 'execute(address)',
+      calldatas: abi.encode(arbitrumPayload),
+      withDelegateCall: true
+    });
+
+    DeployL1Proposal._deployL1Proposal(payloadData, bytes32(0));
     vm.stopBroadcast();
   }
 }

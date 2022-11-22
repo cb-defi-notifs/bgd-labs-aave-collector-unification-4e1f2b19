@@ -40,10 +40,10 @@ contract UpgradeAaveCollectorPayload {
       abi.encodeWithSelector(ICollector.initialize.selector, NEW_FUNDS_ADMIN, STREAM_ID)
     );
 
-    // // We initialise the implementation, for security
+    // We initialise the implementation, for security
     collector.initialize(NEW_FUNDS_ADMIN, STREAM_ID);
 
-    // // Update proxy admin
+    // Update proxy admin
     COLLECTOR_PROXY.changeAdmin(address(proxyAdmin));
   }
 }

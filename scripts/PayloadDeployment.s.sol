@@ -13,6 +13,8 @@ import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAave
 string constant upgradeV2TokensAvalancheArtifact = 'out/UpgradeV2ATokensAvalanche.sol/UpgradeV2ATokensAvalanche.json';
 string constant upgradeV2TokensPolygonArtifact = 'out/UpgradeV2ATokensPolygon.sol/UpgradeV2ATokensPolygon.json';
 
+uint256 constant DEFAULT_STREAM_ID = 100000;
+
 contract DeployMainnet is Script {
   function run() external {
     vm.startBroadcast();
@@ -26,8 +28,8 @@ contract DeployPolygon is Test {
     vm.startBroadcast();
     new UpgradeAaveCollectorPayload(
       AaveV3Polygon.COLLECTOR,
-      address(0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772), // Bridge executor
-      100000
+      AaveGovernanceV2.POLYGON_BRIDGE_EXECUTOR,
+      DEFAULT_STREAM_ID
     );
 
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensPolygonArtifact);
@@ -45,7 +47,7 @@ contract DeployAvalanche is Test {
     new UpgradeAaveCollectorPayload(
       AaveV3Avalanche.COLLECTOR,
       address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Guardian
-      100000
+      DEFAULT_STREAM_ID
     );
 
     address upgradeV2TokensImpl = deployCode(upgradeV2TokensAvalancheArtifact);
@@ -60,8 +62,8 @@ contract DeployOptimism is Script {
     vm.startBroadcast();
     new UpgradeAaveCollectorPayload(
       AaveV3Optimism.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611), // Bridge Executor
-      100000
+      AaveGovernanceV2.OPTIMISM_BRIDGE_EXECUTOR,
+      DEFAULT_STREAM_ID
     );
     vm.stopBroadcast();
   }
@@ -72,8 +74,8 @@ contract DeployArbitrum is Script {
     vm.startBroadcast();
     new UpgradeAaveCollectorPayload(
       AaveV3Arbitrum.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611), // Bridge Executor
-      100000
+      AaveGovernanceV2.ARBITRUM_BRIDGE_EXECUTOR,
+      DEFAULT_STREAM_ID
     );
     vm.stopBroadcast();
   }
@@ -85,7 +87,7 @@ contract DeployFantom is Script {
     new UpgradeAaveCollectorPayload(
       AaveV3Fantom.COLLECTOR,
       address(0xf71fc92e2949ccF6A5Fd369a0b402ba80Bc61E02), // Guardian
-      100000
+      DEFAULT_STREAM_ID
     );
     vm.stopBroadcast();
   }

@@ -3,12 +3,17 @@ pragma solidity ^0.8.0;
 
 import {Test} from 'forge-std/Test.sol';
 import {ILendingPool, DataTypes} from 'aave-address-book/AaveV2.sol';
+import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
 import {IAToken} from '../src/interfaces/IAToken.sol';
+import {IAaveIncentivesController} from '../src/interfaces/v2/IAaveIncentivesController.sol';
 import {MockExecutor} from './MockExecutor.sol';
+
+string constant migrateV2CollectorArtifact = 'out/MigrateV2CollectorPayload.sol/MigrateV2CollectorPayload.json';
 
 abstract contract BaseATokensTest is Test {
   address internal payload;
   ILendingPool internal _v2pool;
+  IAaveIncentivesController internal _incentivesController;
   address internal _v2collector;
   address internal _collector;
 
@@ -16,16 +21,27 @@ abstract contract BaseATokensTest is Test {
 
   function _setUp(
     ILendingPool v2pool,
+    IAaveIncentivesController incentivesController,
+    address v2poolConfigurator,
     address v2collector,
     address collector,
-    address aclAdmin,
-    string memory upgradeATokensArtifact
+    address aclAdmin
   ) public {
     _v2pool = v2pool;
+    _incentivesController = incentivesController;
     _v2collector = v2collector;
     _collector = collector;
 
-    payload = deployCode(upgradeATokensArtifact);
+    payload = deployCode(
+      migrateV2CollectorArtifact,
+      abi.encode(
+        address(v2pool),
+        v2poolConfigurator,
+        v2collector,
+        collector,
+        address(incentivesController)
+      )
+    );
 
     MockExecutor mockExecutor = new MockExecutor();
     vm.etch(aclAdmin, address(mockExecutor).code);
@@ -49,6 +65,10 @@ abstract contract BaseATokensTest is Test {
       balancesBefore[i] = aTokens[i].balanceOf(_v2collector);
     }
 
+    // get available rewards
+    uint256 reward = _incentivesController.getUserUnclaimedRewards(_v2collector);
+    address rewardToken = _incentivesController.REWARD_TOKEN();
+
     // Act
     _executor.execute(payload);
 
@@ -63,5 +83,10 @@ abstract contract BaseATokensTest is Test {
       // check that asset was transfered to v3 collector
       assertEq(aTokens[i].balanceOf(_collector), balancesBefore[i]);
     }
+
+    // check that rewards are transferred to the v3 collector
+    uint256 remainingReward = _incentivesController.getUserUnclaimedRewards(_v2collector);
+    assertEq(remainingReward, 0);
+    assertEq(IERC20(rewardToken).balanceOf(_collector), reward);
   }
 }

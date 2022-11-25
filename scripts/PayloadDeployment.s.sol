@@ -5,13 +5,13 @@ import 'forge-std/Test.sol';
 import 'forge-std/console.sol';
 import {Script} from 'forge-std/Script.sol';
 
-import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
+import {AaveV2Ethereum, AaveV2Avalanche, AaveV2Polygon, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
 import {AaveGovernanceV2} from 'aave-address-book/AaveGovernanceV2.sol';
 import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAaveCollectorPayload.sol';
 
 // artifacts
-string constant upgradeV2TokensAvalancheArtifact = 'out/UpgradeV2ATokensAvalanche.sol/UpgradeV2ATokensAvalanche.json';
-string constant upgradeV2TokensPolygonArtifact = 'out/UpgradeV2ATokensPolygon.sol/UpgradeV2ATokensPolygon.json';
+string constant upgradeV2TokensArtifact = 'out/MigrateV2CollectorPayload.sol/MigrateV2CollectorPayload.json';
+// string constant upgradeV2TokensPolygonArtifact = 'out/UpgradeV2ATokensPolygon.sol/UpgradeV2ATokensPolygon.json';
 
 uint256 constant DEFAULT_STREAM_ID = 100000;
 
@@ -32,15 +32,23 @@ contract DeployPolygon is Test {
       DEFAULT_STREAM_ID
     );
 
-    address upgradeV2TokensImpl = deployCode(upgradeV2TokensPolygonArtifact);
+    address upgradeV2TokensImpl = deployCode(
+      upgradeV2TokensArtifact,
+      abi.encode(
+        address(AaveV2Polygon.POOL),
+        address(AaveV2Polygon.POOL_CONFIGURATOR),
+        AaveV2Polygon.COLLECTOR,
+        address(0x357D51124f59836DeD84c8a1730D72B749d8BC23)
+      )
+    );
+
+    // address upgradeV2TokensImpl = deployCode(upgradeV2TokensPolygonArtifact);
     console.log('upgradeV2TokensPolygonImpl:', upgradeV2TokensImpl);
 
     vm.stopBroadcast();
   }
 }
 
-// TODO: currently Avalanche v2 Pool Admin is 0x01244E7842254e3FD229CD263472076B1439D1Cd
-// need to be changed to the actual guardian
 contract DeployAvalanche is Test {
   function run() external {
     vm.startBroadcast();
@@ -50,7 +58,17 @@ contract DeployAvalanche is Test {
       DEFAULT_STREAM_ID
     );
 
-    address upgradeV2TokensImpl = deployCode(upgradeV2TokensAvalancheArtifact);
+    address upgradeV2TokensImpl = deployCode(
+      upgradeV2TokensArtifact,
+      abi.encode(
+        address(AaveV2Avalanche.POOL),
+        address(AaveV2Avalanche.POOL_CONFIGURATOR),
+        AaveV2Avalanche.COLLECTOR,
+        AaveV3Avalanche.COLLECTOR,
+        address(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9)
+      )
+    );
+
     console.log('upgradeV2TokensAvalancheImpl:', upgradeV2TokensImpl);
 
     vm.stopBroadcast();

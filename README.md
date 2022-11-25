@@ -15,8 +15,7 @@ As there is quite a lot of difference in the current layout of the Collectors/Po
 1. `PayloadDeployment.sol` which contains multiple scripts which allow deploying a payload for a specific network.
 2. `ProposalDeployment.sol` which contains a deploy script that will create the onchainProposals for all the networks controlled via governance (mainnet, polygon, optimism, arbitrum).
 3. `AaveMigrationController.sol` payload is used for every network to deploy new implementation of the collector, proxy admin, and change funds admin of the collector.
-4. `UpgradeV2ATokensPolygon` is additionally used for polygon to initialize the ATokens with the new collector and transfer all the assets from the current collector to the new one.
-5. `UpgradeV2ATokensAvalanche` is additionally used for avalanche to initialize the ATokens with the new collector and transfer all the assets from the current collector to the new one by deploying the migration collector.
+4. `MigrateV2CollectorPayload` is additionally used for V2 pools on polygon and avalanche to initialize the ATokens with the new collector, transfer all the assets and claim rewards to the new collector by deploying the migration collector.
 
 ## Development
 

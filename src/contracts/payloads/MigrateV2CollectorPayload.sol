@@ -71,11 +71,11 @@ contract MigrateV2CollectorPayload {
     aTokenImplementation.initialize(
       ILendingPoolForInit(address(POOL)),
       NEW_COLLECTOR,
-      0x63a72806098Bd3D9520cC43356dD78afe5D386D9, // AAVE Token
+      address(0), // AAVE Token
       INCENTIVES_CONTROLLER,
       18,
       'Aave Token',
-      'AAVE.e',
+      'AAVE',
       '0x10'
     );
 

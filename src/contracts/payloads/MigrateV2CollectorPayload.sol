@@ -61,7 +61,7 @@ contract MigrateV2CollectorPayload {
           name: aToken.name(),
           symbol: aToken.symbol(),
           implementation: address(aTokenImplementation),
-          params: '0x10'
+          params: '0x10' // this parameter is not actually used anywhere
         });
 
       POOL_CONFIGURATOR.updateAToken(input);
@@ -76,7 +76,7 @@ contract MigrateV2CollectorPayload {
       18,
       'Aave Token',
       'AAVE',
-      '0x10'
+      '0x10' // this parameter is not actually used anywhere
     );
 
     return aTokens;

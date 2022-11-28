@@ -38,7 +38,8 @@ contract DeployPolygon is Test {
         address(AaveV2Polygon.POOL),
         address(AaveV2Polygon.POOL_CONFIGURATOR),
         AaveV2Polygon.COLLECTOR,
-        address(0x357D51124f59836DeD84c8a1730D72B749d8BC23)
+        AaveV3Polygon.COLLECTOR,
+        address(0x357D51124f59836DeD84c8a1730D72B749d8BC23) // Polygon v2 Inventives Controller
       )
     );
 
@@ -54,7 +55,7 @@ contract DeployAvalanche is Test {
     vm.startBroadcast();
     new UpgradeAaveCollectorPayload(
       AaveV3Avalanche.COLLECTOR,
-      address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Guardian
+      address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Avalanche v3 Guardian
       DEFAULT_STREAM_ID
     );
 
@@ -65,7 +66,7 @@ contract DeployAvalanche is Test {
         address(AaveV2Avalanche.POOL_CONFIGURATOR),
         AaveV2Avalanche.COLLECTOR,
         AaveV3Avalanche.COLLECTOR,
-        address(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9)
+        address(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9) // Avalanche v3 Guardian
       )
     );
 

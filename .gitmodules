@@ -13,3 +13,4 @@
 [submodule "lib/protocol-v2"]
 	path = lib/protocol-v2
 	url = https://github.com/bgd-labs/protocol-v2
+	branch = update-atoken-revision

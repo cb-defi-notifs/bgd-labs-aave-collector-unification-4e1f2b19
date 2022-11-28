@@ -39,7 +39,7 @@ contract DeployPolygon is Test {
         address(AaveV2Polygon.POOL_CONFIGURATOR),
         AaveV2Polygon.COLLECTOR,
         AaveV3Polygon.COLLECTOR,
-        address(0x357D51124f59836DeD84c8a1730D72B749d8BC23) // Polygon v2 Inventives Controller
+        address(0x357D51124f59836DeD84c8a1730D72B749d8BC23) // Polygon v2 Incentives Controller
       )
     );
 

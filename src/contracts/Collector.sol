@@ -84,7 +84,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
 
   /// @inheritdoc ICollector
   function initialize(address fundsAdmin, uint256 nextStreamId) external initializer {
-    if (nextStreamId > 0) {
+    if (nextStreamId != 0) {
       _nextStreamId = nextStreamId;
     }
 

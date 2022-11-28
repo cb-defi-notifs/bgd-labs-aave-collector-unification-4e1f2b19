@@ -66,7 +66,7 @@ contract DeployAvalanche is Test {
         address(AaveV2Avalanche.POOL_CONFIGURATOR),
         AaveV2Avalanche.COLLECTOR,
         AaveV3Avalanche.COLLECTOR,
-        address(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9) // Avalanche v3 Guardian
+        address(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9) // Avalanche v2 Incentives Controller
       )
     );
 

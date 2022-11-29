@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Test} from 'forge-std/Test.sol';
-import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony} from 'aave-address-book/AaveAddressBook.sol';
+import {AaveV2Ethereum, AaveGovernanceV2, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony} from 'aave-address-book/AaveAddressBook.sol';
 import {AaveGovernanceV2} from 'aave-address-book/AaveGovernanceV2.sol';
 import {ProxyHelpers} from 'aave-helpers/ProxyHelpers.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
@@ -15,7 +15,7 @@ contract ProposalTestMainnet is BaseTest {
     vm.createSelectFork(vm.rpcUrl('ethereum'), 15882200);
     _setUp(
       AaveV2Ethereum.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611),
+      AaveGovernanceV2.SHORT_EXECUTOR,
       0,
       AaveGovernanceV2.SHORT_EXECUTOR
     );
@@ -27,7 +27,7 @@ contract ProposalTestPolygon is BaseTest {
     vm.createSelectFork(vm.rpcUrl('polygon'), 34550201);
     _setUp(
       AaveV3Polygon.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611),
+      AaveGovernanceV2.POLYGON_BRIDGE_EXECUTOR,
       100000,
       AaveV3Polygon.ACL_ADMIN
     );
@@ -39,7 +39,7 @@ contract ProposalTestAvalanche is BaseTest {
     vm.createSelectFork(vm.rpcUrl('avalanche'), 21815137);
     _setUp(
       AaveV3Avalanche.COLLECTOR,
-      address(0xa35b76E4935449E33C56aB24b23fcd3246f13470),
+      address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Avalanche v3 Guardian
       100000,
       AaveV3Avalanche.ACL_ADMIN
     );
@@ -51,7 +51,7 @@ contract ProposalTestOptimism is BaseTest {
     vm.createSelectFork(vm.rpcUrl('optimism'), 33162240);
     _setUp(
       AaveV3Optimism.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611),
+      AaveGovernanceV2.OPTIMISM_BRIDGE_EXECUTOR,
       100000,
       AaveV3Optimism.ACL_ADMIN
     );
@@ -63,7 +63,7 @@ contract ProposalTestArbitrum is BaseTest {
     vm.createSelectFork(vm.rpcUrl('arbitrum'), 34229000);
     _setUp(
       AaveV3Arbitrum.COLLECTOR,
-      address(0x7d9103572bE58FfE99dc390E8246f02dcAe6f611),
+      AaveGovernanceV2.ARBITRUM_BRIDGE_EXECUTOR,
       100000,
       AaveV3Arbitrum.ACL_ADMIN
     );
@@ -75,7 +75,7 @@ contract ProposalTestFantom is BaseTest {
     vm.createSelectFork(vm.rpcUrl('fantom'), 50315029);
     _setUp(
       AaveV3Fantom.COLLECTOR,
-      address(0xf71fc92e2949ccF6A5Fd369a0b402ba80Bc61E02),
+      address(0xf71fc92e2949ccF6A5Fd369a0b402ba80Bc61E02), // Guardian
       100000,
       AaveV3Fantom.ACL_ADMIN
     );

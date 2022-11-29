@@ -32,7 +32,7 @@ contract ProposalTestAvalanche is BaseATokensTest {
       address(AaveV2Avalanche.POOL_CONFIGURATOR),
       AaveV2Avalanche.COLLECTOR,
       AaveV3Avalanche.COLLECTOR,
-      address(0x01244E7842254e3FD229CD263472076B1439D1Cd)
+      address(0x01244E7842254e3FD229CD263472076B1439D1Cd) // Avalanche v2 Guardian
     );
   }
 }

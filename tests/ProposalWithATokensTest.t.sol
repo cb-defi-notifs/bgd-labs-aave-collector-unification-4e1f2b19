@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import {Test} from 'forge-std/Test.sol';
 import {AaveV2Polygon, AaveV3Polygon, AaveV2Avalanche, AaveV3Avalanche} from 'aave-address-book/AaveAddressBook.sol';
-import {ProxyHelpers} from 'aave-helpers/ProxyHelpers.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 import {IAaveIncentivesController} from '../src/interfaces/v2/IAaveIncentivesController.sol';
 import {MockExecutor} from './MockExecutor.sol';

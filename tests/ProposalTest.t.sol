@@ -23,7 +23,7 @@ contract ProposalTestMainnet is BaseTest {
 
 contract ProposalTestPolygon is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('polygon'), 34550201);
+    vm.createSelectFork(vm.rpcUrl('polygon'), 39006430);
     _setUp(
       AaveV3Polygon.COLLECTOR,
       AaveGovernanceV2.POLYGON_BRIDGE_EXECUTOR,
@@ -35,7 +35,7 @@ contract ProposalTestPolygon is BaseTest {
 
 contract ProposalTestAvalanche is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('avalanche'), 21815137);
+    vm.createSelectFork(vm.rpcUrl('avalanche'), 25937220);
     _setUp(
       AaveV3Avalanche.COLLECTOR,
       address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Avalanche v3 Guardian
@@ -47,7 +47,7 @@ contract ProposalTestAvalanche is BaseTest {
 
 contract ProposalTestOptimism is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('optimism'), 33162240);
+    vm.createSelectFork(vm.rpcUrl('optimism'), 72720040);
     _setUp(
       AaveV3Optimism.COLLECTOR,
       AaveGovernanceV2.OPTIMISM_BRIDGE_EXECUTOR,
@@ -59,7 +59,7 @@ contract ProposalTestOptimism is BaseTest {
 
 contract ProposalTestArbitrum is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('arbitrum'), 34229000);
+    vm.createSelectFork(vm.rpcUrl('arbitrum'));
     _setUp(
       AaveV3Arbitrum.COLLECTOR,
       AaveGovernanceV2.ARBITRUM_BRIDGE_EXECUTOR,
@@ -71,7 +71,7 @@ contract ProposalTestArbitrum is BaseTest {
 
 contract ProposalTestFantom is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('fantom'), 50315029);
+    vm.createSelectFork(vm.rpcUrl('fantom'), 55246290);
     _setUp(
       AaveV3Fantom.COLLECTOR,
       address(0xf71fc92e2949ccF6A5Fd369a0b402ba80Bc61E02), // Guardian

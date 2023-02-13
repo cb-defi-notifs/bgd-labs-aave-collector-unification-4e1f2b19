@@ -2,7 +2,7 @@
 
 This repository contains the latest version of the Aave Collector and the proposals to sync Collector implementations across different networks and pools.
 
-At the moment there is quite a lot of divergence between the different collectors, even if they could have the same features and interfaces across all deployments of Aave (v2/v3). As a reference, we have chosen the version from this repository (https://github.com/bgd-labs/aave-ecosystem-reserve-v2), which is currently deployed on the Ethereum V2 market (https://etherscan.io/address/0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c#readProxyContract), and made a few improvements to it.
+At the moment there is quite a lot of divergence between the different collectors, even if they could have the same features and interfaces across all deployments of Aave (v2/v3). As a reference, we have chosen the version from this repository (https://github.com/bgd-labs/aave-ecosystem-reserve-v2), which is currently deployed on the Ethereum V2 pool (https://etherscan.io/address/0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c#readProxyContract), and made a few improvements to it.
 
 All collectors use an "imperfect" pattern at the moment, based on a "controller of collector" to solve the problem of the proxy admin only being able to call admin functions on the proxy. We are aiming to generalize that controller of the Collector with a ProxyAdmin contract. This helps if in the future more functionality is added to the Collectors, as ProxyAdmin is not limited to the methods explicitly proxied; it is generic.
 

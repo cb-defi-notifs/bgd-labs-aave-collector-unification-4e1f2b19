@@ -16,11 +16,7 @@ contract UpgradeAaveCollectorPayload {
   // streamId
   uint256 public immutable STREAM_ID;
 
-  constructor(
-    address proxy,
-    address newFundsAdmin,
-    uint256 streamId
-  ) {
+  constructor(address proxy, address newFundsAdmin, uint256 streamId) {
     COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxy(proxy);
     NEW_FUNDS_ADMIN = newFundsAdmin;
     STREAM_ID = streamId;
@@ -28,7 +24,6 @@ contract UpgradeAaveCollectorPayload {
 
   function execute() external {
     // Deploy proxy admin
-    // TODO: check if we need another contract for IInitializableAdminUpgradeabilityProxy
     ProxyAdmin proxyAdmin = new ProxyAdmin();
 
     // Deploy new collector

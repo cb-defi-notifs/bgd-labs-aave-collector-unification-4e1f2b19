@@ -63,6 +63,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
 
   /**
    * @dev Throws if the caller is not the funds admin of the recipient of the stream.
+   * @param streamId The id of the stream to query.
    */
   modifier onlyAdminOrRecipient(uint256 streamId) {
     require(
@@ -93,10 +94,7 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
 
   /*** View Functions ***/
 
-  /**
-   * @notice Returns the current revision of the contract
-   * @return uint256 current revision
-   **/
+  /// @inheritdoc VersionedInitializable
   function getRevision() internal pure override returns (uint256) {
     return REVISION;
   }
@@ -111,13 +109,10 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
     return _nextStreamId;
   }
 
-  /**
-   * @notice Returns the stream with all its properties.
-   * @dev Throws if the id does not point to a valid stream.
-   * @param streamId The id of the stream to query.
-   * @notice Returns the stream object.
-   */
-  function getStream(uint256 streamId)
+  /// @inheritdoc ICollector
+  function getStream(
+    uint256 streamId
+  )
     external
     view
     streamExists(streamId)
@@ -163,19 +158,11 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
     uint256 senderBalance;
   }
 
-  /**
-   * @notice Returns the available funds for the given stream id and address.
-   * @dev Throws if the id does not point to a valid stream.
-   * @param streamId The id of the stream for which to query the balance.
-   * @param who The address for which to query the balance.
-   * @notice Returns the total funds allocated to `who` as uint256.
-   */
-  function balanceOf(uint256 streamId, address who)
-    public
-    view
-    streamExists(streamId)
-    returns (uint256 balance)
-  {
+  /// @inheritdoc ICollector
+  function balanceOf(
+    uint256 streamId,
+    address who
+  ) public view streamExists(streamId) returns (uint256 balance) {
     Stream memory stream = _streams[streamId];
     BalanceOfLocalVars memory vars;
 
@@ -203,20 +190,12 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
   /*** Public Effects & Interactions Functions ***/
 
   /// @inheritdoc ICollector
-  function approve(
-    IERC20 token,
-    address recipient,
-    uint256 amount
-  ) external onlyFundsAdmin {
+  function approve(IERC20 token, address recipient, uint256 amount) external onlyFundsAdmin {
     token.safeApprove(recipient, amount);
   }
 
   /// @inheritdoc ICollector
-  function transfer(
-    IERC20 token,
-    address recipient,
-    uint256 amount
-  ) external onlyFundsAdmin {
+  function transfer(IERC20 token, address recipient, uint256 amount) external onlyFundsAdmin {
     require(recipient != address(0), 'INVALID_0X_RECIPIENT');
 
     if (address(token) == ETH_MOCK_ADDRESS) {
@@ -248,21 +227,8 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
     uint256 ratePerSecond;
   }
 
+  /// @inheritdoc ICollector
   /**
-   * @dev Set the next available stream id.
-   *  Throws if the streamId is not higher than current one.
-   * @param streamId The id of the new stream
-   */
-  function setNextStreamId(uint256 streamId) external onlyFundsAdmin {
-    require(streamId > _nextStreamId, 'stream id is invalid');
-
-    _nextStreamId = streamId;
-
-    // emit StreamIdChanged(streamId);
-  }
-
-  /**
-   * @notice Creates a new stream funded by this contracts itself and paid towards `recipient`.
    * @dev Throws if the recipient is the zero address, the contract itself or the caller.
    *  Throws if the deposit is 0.
    *  Throws if the start time is before `block.timestamp`.
@@ -274,12 +240,6 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
    *  Throws if the next stream id calculation has a math error.
    *  Throws if the contract is not allowed to transfer enough tokens.
    *  Throws if there is a token transfer failure.
-   * @param recipient The address towards which the money is streamed.
-   * @param deposit The amount of money to be streamed.
-   * @param tokenAddress The ERC20 token to use as streaming currency.
-   * @param startTime The unix timestamp for when the stream starts.
-   * @param stopTime The unix timestamp for when the stream stops.
-   * @return streamId the uint256 id of the newly created stream.
    */
   function createStream(
     address recipient,
@@ -335,23 +295,17 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
     return streamId;
   }
 
+  /// @inheritdoc ICollector
   /**
-   * @notice Withdraws from the contract to the recipient's account.
    * @dev Throws if the id does not point to a valid stream.
    *  Throws if the caller is not the funds admin or the recipient of the stream.
    *  Throws if the amount exceeds the available balance.
    *  Throws if there is a token transfer failure.
-   * @param streamId The id of the stream to withdraw tokens from.
-   * @param amount The amount of tokens to withdraw.
-   * @return bool Returns true if successful.
    */
-  function withdrawFromStream(uint256 streamId, uint256 amount)
-    external
-    nonReentrant
-    streamExists(streamId)
-    onlyAdminOrRecipient(streamId)
-    returns (bool)
-  {
+  function withdrawFromStream(
+    uint256 streamId,
+    uint256 amount
+  ) external nonReentrant streamExists(streamId) onlyAdminOrRecipient(streamId) returns (bool) {
     require(amount > 0, 'amount is zero');
     Stream memory stream = _streams[streamId];
 
@@ -367,21 +321,15 @@ contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
     return true;
   }
 
+  /// @inheritdoc ICollector
   /**
-   * @notice Cancels the stream and transfers the tokens back on a pro rata basis.
    * @dev Throws if the id does not point to a valid stream.
    *  Throws if the caller is not the funds admin or the recipient of the stream.
    *  Throws if there is a token transfer failure.
-   * @param streamId The id of the stream to cancel.
-   * @return bool Returns true if successful.
    */
-  function cancelStream(uint256 streamId)
-    external
-    nonReentrant
-    streamExists(streamId)
-    onlyAdminOrRecipient(streamId)
-    returns (bool)
-  {
+  function cancelStream(
+    uint256 streamId
+  ) external nonReentrant streamExists(streamId) onlyAdminOrRecipient(streamId) returns (bool) {
     Stream memory stream = _streams[streamId];
     uint256 senderBalance = balanceOf(streamId, stream.sender);
     uint256 recipientBalance = balanceOf(streamId, stream.recipient);

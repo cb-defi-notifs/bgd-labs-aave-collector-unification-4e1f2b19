@@ -2,10 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {Test} from 'forge-std/Test.sol';
-import {AaveV2Polygon, AaveV3Polygon, AaveV2Avalanche, AaveV3Avalanche} from 'aave-address-book/AaveAddressBook.sol';
+import {AaveV2Polygon, AaveV3Polygon, AaveV2Avalanche, AaveV3Avalanche, AaveGovernanceV2} from 'aave-address-book/AaveAddressBook.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 import {IAaveIncentivesController} from '../src/interfaces/v2/IAaveIncentivesController.sol';
-import {MockExecutor} from './MockExecutor.sol';
 import {BaseATokensTest} from './BaseATokensTest.sol';
 
 contract ProposalTestPolygon is BaseATokensTest {
@@ -17,7 +16,7 @@ contract ProposalTestPolygon is BaseATokensTest {
       address(AaveV2Polygon.POOL_CONFIGURATOR),
       AaveV2Polygon.COLLECTOR,
       AaveV3Polygon.COLLECTOR,
-      AaveV3Polygon.ACL_ADMIN
+      AaveGovernanceV2.POLYGON_BRIDGE_EXECUTOR
     );
   }
 }

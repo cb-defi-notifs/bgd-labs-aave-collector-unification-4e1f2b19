@@ -4,20 +4,18 @@ pragma solidity ^0.8.0;
 import {Test} from 'forge-std/Test.sol';
 import {ILendingPool, DataTypes} from 'aave-address-book/AaveV2.sol';
 import {IERC20} from 'solidity-utils/contracts/oz-common/interfaces/IERC20.sol';
+import {TestWithExecutor} from 'aave-helpers/GovHelpers.sol';
 import {IAToken} from '../src/interfaces/IAToken.sol';
 import {IAaveIncentivesController} from '../src/interfaces/v2/IAaveIncentivesController.sol';
-import {MockExecutor} from './MockExecutor.sol';
 
 string constant migrateV2CollectorArtifact = 'out/MigrateV2CollectorPayload.sol/MigrateV2CollectorPayload.json';
 
-abstract contract BaseATokensTest is Test {
+abstract contract BaseATokensTest is TestWithExecutor {
   address internal payload;
   ILendingPool internal _v2pool;
   IAaveIncentivesController internal _incentivesController;
   address internal _v2collector;
   address internal _collector;
-
-  MockExecutor internal _executor;
 
   function _setUp(
     ILendingPool v2pool,
@@ -25,7 +23,7 @@ abstract contract BaseATokensTest is Test {
     address v2poolConfigurator,
     address v2collector,
     address collector,
-    address aclAdmin
+    address executor
   ) public {
     _v2pool = v2pool;
     _incentivesController = incentivesController;
@@ -43,10 +41,7 @@ abstract contract BaseATokensTest is Test {
       )
     );
 
-    MockExecutor mockExecutor = new MockExecutor();
-    vm.etch(aclAdmin, address(mockExecutor).code);
-
-    _executor = MockExecutor(aclAdmin);
+    _selectPayloadExecutor(executor);
   }
 
   function testExecuteATokensTransferedAndImplUpdated() public {
@@ -70,7 +65,7 @@ abstract contract BaseATokensTest is Test {
     address rewardToken = _incentivesController.REWARD_TOKEN();
 
     // Act
-    _executor.execute(payload);
+    _executePayload(payload);
 
     // Assert
     for (uint256 i = 0; i < aTokens.length; i++) {

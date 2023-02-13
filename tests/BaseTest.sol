@@ -2,39 +2,31 @@
 pragma solidity ^0.8.0;
 
 import {Test} from 'forge-std/Test.sol';
-import {Ownable} from 'solidity-utils/contracts/oz-common/Ownable.sol';
-import {AaveGovernanceV2} from 'aave-address-book/AaveGovernanceV2.sol';
-import {AaveV2Ethereum} from 'aave-address-book/AaveV2Ethereum.sol';
 import {ProxyHelpers} from 'aave-helpers/ProxyHelpers.sol';
+import {TestWithExecutor} from 'aave-helpers/GovHelpers.sol';
 import {ICollector} from '../src/interfaces/ICollector.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../src/interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAaveCollectorPayload.sol';
 import {Collector} from '../src/contracts/Collector.sol';
-import {MockExecutor} from './MockExecutor.sol';
 
-abstract contract BaseTest is Test {
+abstract contract BaseTest is TestWithExecutor {
   UpgradeAaveCollectorPayload public payload;
   address internal _collector;
   address internal _newFundsAdmin;
   uint256 internal _streamId;
 
-  MockExecutor internal _executor;
-
   function _setUp(
     address collector,
     address newFundsAdmin,
     uint256 streamId,
-    address aclAdmin
+    address executor
   ) public {
     _collector = collector;
     _newFundsAdmin = newFundsAdmin;
     _streamId = streamId;
 
     payload = new UpgradeAaveCollectorPayload(collector, newFundsAdmin, streamId);
-    MockExecutor mockExecutor = new MockExecutor();
-    vm.etch(aclAdmin, address(mockExecutor).code);
-
-    _executor = MockExecutor(aclAdmin);
+    _selectPayloadExecutor(executor);
   }
 
   function testExecuteProxyAdminAndFundsAdminChanged() public {
@@ -50,7 +42,7 @@ abstract contract BaseTest is Test {
     }
 
     // Act
-    _executor.execute(address(payload));
+    _executePayload(address(payload));
 
     // Assert
     address implAfter = ProxyHelpers.getInitializableAdminUpgradeabilityProxyImplementation(

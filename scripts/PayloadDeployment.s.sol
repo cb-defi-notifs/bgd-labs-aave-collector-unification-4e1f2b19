@@ -11,7 +11,6 @@ import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAave
 
 // artifacts
 string constant upgradeV2TokensArtifact = 'out/MigrateV2CollectorPayload.sol/MigrateV2CollectorPayload.json';
-// string constant upgradeV2TokensPolygonArtifact = 'out/UpgradeV2ATokensPolygon.sol/UpgradeV2ATokensPolygon.json';
 
 uint256 constant DEFAULT_STREAM_ID = 100000;
 
@@ -39,11 +38,10 @@ contract DeployPolygon is Test {
         address(AaveV2Polygon.POOL_CONFIGURATOR),
         AaveV2Polygon.COLLECTOR,
         AaveV3Polygon.COLLECTOR,
-        address(0x357D51124f59836DeD84c8a1730D72B749d8BC23) // Polygon v2 Incentives Controller
+        AaveV2Polygon.DEFAULT_INCENTIVES_CONTROLLER
       )
     );
 
-    // address upgradeV2TokensImpl = deployCode(upgradeV2TokensPolygonArtifact);
     console.log('upgradeV2TokensPolygonImpl:', upgradeV2TokensImpl);
 
     vm.stopBroadcast();
@@ -66,7 +64,7 @@ contract DeployAvalanche is Test {
         address(AaveV2Avalanche.POOL_CONFIGURATOR),
         AaveV2Avalanche.COLLECTOR,
         AaveV3Avalanche.COLLECTOR,
-        address(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9) // Avalanche v2 Incentives Controller
+        AaveV2Avalanche.DEFAULT_INCENTIVES_CONTROLLER // Avalanche v2 Incentives Controller
       )
     );
 

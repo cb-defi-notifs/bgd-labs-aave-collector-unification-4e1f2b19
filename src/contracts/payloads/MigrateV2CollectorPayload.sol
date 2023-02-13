@@ -9,12 +9,12 @@ import {DataTypes, ConfiguratorInputTypes, ILendingPool} from 'aave-address-book
 import {AaveMigrationCollector} from './AaveMigrationCollector.sol';
 import {ICollectorController} from '../../interfaces/v2/ICollectorController.sol';
 import {ILendingPoolConfigurator} from '../../interfaces/v2/ILendingPoolConfigurator.sol';
-import {IInitializableAdminUpgradeabilityProxyV2} from '../../interfaces/v2/IInitializableAdminUpgradeabilityProxyV2.sol';
+import {IInitializableAdminUpgradeabilityProxy} from '../../interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 
 contract MigrateV2CollectorPayload {
   ILendingPool public immutable POOL;
   ILendingPoolConfigurator public immutable POOL_CONFIGURATOR;
-  IInitializableAdminUpgradeabilityProxyV2 public immutable COLLECTOR_PROXY;
+  IInitializableAdminUpgradeabilityProxy public immutable COLLECTOR_PROXY;
   IAaveIncentivesController public immutable INCENTIVES_CONTROLLER;
 
   address public immutable NEW_COLLECTOR;
@@ -28,7 +28,7 @@ contract MigrateV2CollectorPayload {
   ) public {
     POOL = ILendingPool(pool);
     POOL_CONFIGURATOR = ILendingPoolConfigurator(poolConfigurator);
-    COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxyV2(v2collector);
+    COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxy(v2collector);
     NEW_COLLECTOR = collector;
     INCENTIVES_CONTROLLER = IAaveIncentivesController(incentivesController);
   }

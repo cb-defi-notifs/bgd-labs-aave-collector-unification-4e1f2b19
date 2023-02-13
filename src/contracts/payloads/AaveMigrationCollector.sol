@@ -3,7 +3,7 @@ pragma solidity >=0.6.0;
 
 import {IERC20} from '@aave/core-v2/contracts/dependencies/openzeppelin/contracts/IERC20.sol';
 import {IAaveIncentivesController} from '@aave/core-v2/contracts/interfaces/IAaveIncentivesController.sol';
-import {VersionedInitializable} from '../../interfaces/v2/VersionedInitializable.sol';
+import {VersionedInitializable} from '../../libs/VersionedInitializable.sol';
 
 /**
  * @title AaveMigrationCollector

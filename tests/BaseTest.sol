@@ -12,20 +12,23 @@ import {Collector} from '../src/contracts/Collector.sol';
 abstract contract BaseTest is TestWithExecutor {
   UpgradeAaveCollectorPayload public payload;
   address internal _collector;
+  address internal _proxyAdmin;
   address internal _newFundsAdmin;
   uint256 internal _streamId;
 
   function _setUp(
     address collector,
+    address proxyAdmin,
     address newFundsAdmin,
     uint256 streamId,
     address executor
   ) public {
     _collector = collector;
+    _proxyAdmin = proxyAdmin;
     _newFundsAdmin = newFundsAdmin;
     _streamId = streamId;
 
-    payload = new UpgradeAaveCollectorPayload(collector, newFundsAdmin, streamId);
+    payload = new UpgradeAaveCollectorPayload(collector, proxyAdmin, newFundsAdmin, streamId);
     _selectPayloadExecutor(executor);
   }
 
@@ -53,14 +56,14 @@ abstract contract BaseTest is TestWithExecutor {
     // implementation should change
     assertTrue(implBefore != implAfter);
 
-    // check fundsAdmin = short executor
+    // check fundsAdmin = short executor/guardian
     assertEq(collector.getFundsAdmin(), _newFundsAdmin);
 
     // check that funds admin is not the proxy admin
-    vm.expectRevert();
-    vm.prank(_newFundsAdmin);
+    vm.prank(_proxyAdmin);
 
-    IInitializableAdminUpgradeabilityProxy(_collector).admin();
+    address newAdmin = IInitializableAdminUpgradeabilityProxy(_collector).admin();
+    assertEq(newAdmin, _proxyAdmin);
 
     // check that stream id is set or not modified
     uint256 newStreamId = collector.getNextStreamId();

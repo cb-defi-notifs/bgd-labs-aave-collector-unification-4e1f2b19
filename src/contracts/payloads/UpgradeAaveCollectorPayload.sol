@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ProxyAdmin} from 'solidity-utils/contracts/transparent-proxy/ProxyAdmin.sol';
 import {Collector} from '../Collector.sol';
 import {IInitializableAdminUpgradeabilityProxy} from '../../interfaces/IInitializableAdminUpgradeabilityProxy.sol';
 import {ICollector} from '../../interfaces/ICollector.sol';
@@ -13,19 +12,20 @@ contract UpgradeAaveCollectorPayload {
   // short executor or guardian address
   address public immutable NEW_FUNDS_ADMIN;
 
+  // proxy admin
+  address public immutable PROXY_ADMIN;
+
   // streamId
   uint256 public immutable STREAM_ID;
 
-  constructor(address proxy, address newFundsAdmin, uint256 streamId) {
+  constructor(address proxy, address proxyAdmin, address newFundsAdmin, uint256 streamId) {
     COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxy(proxy);
+    PROXY_ADMIN = proxyAdmin;
     NEW_FUNDS_ADMIN = newFundsAdmin;
     STREAM_ID = streamId;
   }
 
   function execute() external {
-    // Deploy proxy admin
-    ProxyAdmin proxyAdmin = new ProxyAdmin();
-
     // Deploy new collector
     Collector collector = new Collector();
 
@@ -39,6 +39,6 @@ contract UpgradeAaveCollectorPayload {
     collector.initialize(NEW_FUNDS_ADMIN, STREAM_ID);
 
     // Update proxy admin
-    COLLECTOR_PROXY.changeAdmin(address(proxyAdmin));
+    COLLECTOR_PROXY.changeAdmin(PROXY_ADMIN);
   }
 }

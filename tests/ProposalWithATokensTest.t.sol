@@ -23,14 +23,14 @@ contract ProposalTestPolygon is BaseATokensTest {
 
 contract ProposalTestAvalanche is BaseATokensTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('avalanche'), 21815137);
+    vm.createSelectFork(vm.rpcUrl('avalanche'), 26194290);
     _setUp(
       AaveV2Avalanche.POOL,
       IAaveIncentivesController(0x01D83Fe6A10D2f2B7AF17034343746188272cAc9),
       address(AaveV2Avalanche.POOL_CONFIGURATOR),
       AaveV2Avalanche.COLLECTOR,
       AaveV3Avalanche.COLLECTOR,
-      address(0x01244E7842254e3FD229CD263472076B1439D1Cd) // Avalanche v2 Guardian
+      address(0x01244E7842254e3FD229CD263472076B1439D1Cd) // Avalanche v2 Guardian, permissions should be transferred to 0xa35b76E4935449E33C56aB24b23fcd3246f13470
     );
   }
 }

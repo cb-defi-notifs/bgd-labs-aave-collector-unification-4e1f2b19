@@ -33,7 +33,7 @@ contract ProposalTestPolygon is BaseTest {
 
 contract ProposalTestAvalanche is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('avalanche'), 25937220);
+    vm.createSelectFork(vm.rpcUrl('avalanche'), 26194290);
     _setUp(
       AaveV3Avalanche.COLLECTOR,
       address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Avalanche v3 Guardian
@@ -45,12 +45,12 @@ contract ProposalTestAvalanche is BaseTest {
 
 contract ProposalTestOptimism is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('optimism'), 72720040);
+    vm.createSelectFork(vm.rpcUrl('optimism'));
     _setUp(
       AaveV3Optimism.COLLECTOR,
       AaveGovernanceV2.OPTIMISM_BRIDGE_EXECUTOR,
       100000,
-      AaveV3Optimism.ACL_ADMIN // Safe Guardian owns the collector now
+      AaveGovernanceV2.OPTIMISM_BRIDGE_EXECUTOR // Safe Guardian owns the collector now, will work after permissions switch
     );
   }
 }
@@ -62,7 +62,7 @@ contract ProposalTestArbitrum is BaseTest {
       AaveV3Arbitrum.COLLECTOR,
       AaveGovernanceV2.ARBITRUM_BRIDGE_EXECUTOR,
       100000,
-      AaveV3Arbitrum.ACL_ADMIN // Safe Guardian owns the collector now
+      AaveGovernanceV2.ARBITRUM_BRIDGE_EXECUTOR // Safe Guardian owns the collector now, will work after permissions switch
     );
   }
 }

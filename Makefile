@@ -26,3 +26,7 @@ git-diff :
 	
 diff:
 	@make git-diff before='./flattened/${chain}.sol' after='./flattened/NewCollector.sol' out=${chain}
+
+# generate storage layouts
+storage-layout:
+	forge inspect ./flattened/${chain}.sol:Collector storage-layout --pretty > diffs/${chain}_layout.md

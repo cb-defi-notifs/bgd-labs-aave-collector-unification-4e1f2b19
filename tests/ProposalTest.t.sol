@@ -9,7 +9,7 @@ import {BaseTest} from './BaseTest.sol';
 
 contract ProposalTestMainnet is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('ethereum'), 16621900);
+    vm.createSelectFork(vm.rpcUrl('mainnet'), 16621900);
     _setUp(
       AaveV2Ethereum.COLLECTOR,
       AaveMisc.PROXY_ADMIN_ETHEREUM,

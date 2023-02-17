@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import 'forge-std/Test.sol';
-import 'forge-std/console.sol';
 import {Script} from 'forge-std/Script.sol';
 
-import {AaveV2Ethereum, AaveV2Avalanche, AaveV2Polygon, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2, AaveMisc} from 'aave-address-book/AaveAddressBook.sol';
-import {AaveGovernanceV2} from 'aave-address-book/AaveGovernanceV2.sol';
+import {AaveV2Ethereum, AaveV2Avalanche, AaveV2Polygon, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Harmony, AaveGovernanceV2, AaveGovernanceV2, AaveMisc} from 'aave-address-book/AaveAddressBook.sol';
 import {UpgradeAaveCollectorPayload} from '../src/contracts/payloads/UpgradeAaveCollectorPayload.sol';
 
 // artifacts
@@ -27,7 +24,7 @@ contract DeployMainnet is Script {
   }
 }
 
-contract DeployPolygon is Test {
+contract DeployPolygon is Script {
   function run() external {
     vm.startBroadcast();
     new UpgradeAaveCollectorPayload(
@@ -37,24 +34,11 @@ contract DeployPolygon is Test {
       DEFAULT_STREAM_ID
     );
 
-    address upgradeV2TokensImpl = deployCode(
-      upgradeV2TokensArtifact,
-      abi.encode(
-        address(AaveV2Polygon.POOL),
-        address(AaveV2Polygon.POOL_CONFIGURATOR),
-        AaveV2Polygon.COLLECTOR,
-        AaveV3Polygon.COLLECTOR,
-        AaveV2Polygon.DEFAULT_INCENTIVES_CONTROLLER
-      )
-    );
-
-    console.log('upgradeV2TokensPolygonImpl:', upgradeV2TokensImpl);
-
     vm.stopBroadcast();
   }
 }
 
-contract DeployAvalanche is Test {
+contract DeployAvalanche is Script {
   function run() external {
     vm.startBroadcast();
     new UpgradeAaveCollectorPayload(
@@ -63,19 +47,6 @@ contract DeployAvalanche is Test {
       address(0xa35b76E4935449E33C56aB24b23fcd3246f13470), // Avalanche v3 Guardian
       DEFAULT_STREAM_ID
     );
-
-    address upgradeV2TokensImpl = deployCode(
-      upgradeV2TokensArtifact,
-      abi.encode(
-        address(AaveV2Avalanche.POOL),
-        address(AaveV2Avalanche.POOL_CONFIGURATOR),
-        AaveV2Avalanche.COLLECTOR,
-        AaveV3Avalanche.COLLECTOR,
-        AaveV2Avalanche.DEFAULT_INCENTIVES_CONTROLLER // Avalanche v2 Incentives Controller
-      )
-    );
-
-    console.log('upgradeV2TokensAvalancheImpl:', upgradeV2TokensImpl);
 
     vm.stopBroadcast();
   }

@@ -27,6 +27,7 @@ contract UpgradeAaveCollectorPayload {
 
   function execute() external {
     // Deploy new collector
+    // TODO: deploy in script in advance
     Collector collector = new Collector();
 
     // Upgrade of collector implementation

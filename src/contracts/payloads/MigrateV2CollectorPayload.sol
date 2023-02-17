@@ -3,8 +3,6 @@ pragma experimental ABIEncoderV2;
 pragma solidity >=0.6.0;
 
 import {AToken} from '@aave/core-v2/contracts/protocol/tokenization/AToken.sol';
-import {ILendingPool as ILendingPoolForInit} from '@aave/core-v2/contracts/interfaces/ILendingPool.sol';
-import {IAaveIncentivesController} from '@aave/core-v2/contracts/interfaces/IAaveIncentivesController.sol';
 import {DataTypes, ConfiguratorInputTypes, ILendingPool} from 'aave-address-book/AaveV2.sol';
 import {AaveMigrationCollector} from './AaveMigrationCollector.sol';
 import {ICollectorController} from '../../interfaces/v2/ICollectorController.sol';
@@ -15,22 +13,28 @@ contract MigrateV2CollectorPayload {
   ILendingPool public immutable POOL;
   ILendingPoolConfigurator public immutable POOL_CONFIGURATOR;
   IInitializableAdminUpgradeabilityProxy public immutable COLLECTOR_PROXY;
-  IAaveIncentivesController public immutable INCENTIVES_CONTROLLER;
 
+  address public immutable INCENTIVES_CONTROLLER;
   address public immutable NEW_COLLECTOR;
+  address public immutable MIGRATION_COLLECTOR;
+  address public immutable ATOKEN_IMPL;
 
   constructor(
     address pool,
     address poolConfigurator,
     address v2collector,
     address collector,
-    address incentivesController
+    address incentivesController,
+    address migrationCollector,
+    address aTokenImplementation
   ) public {
     POOL = ILendingPool(pool);
     POOL_CONFIGURATOR = ILendingPoolConfigurator(poolConfigurator);
     COLLECTOR_PROXY = IInitializableAdminUpgradeabilityProxy(v2collector);
     NEW_COLLECTOR = collector;
-    INCENTIVES_CONTROLLER = IAaveIncentivesController(incentivesController);
+    INCENTIVES_CONTROLLER = incentivesController;
+    MIGRATION_COLLECTOR = migrationCollector;
+    ATOKEN_IMPL = aTokenImplementation;
   }
 
   function execute() external {
@@ -42,8 +46,6 @@ contract MigrateV2CollectorPayload {
   }
 
   function updateATokens(address[] memory reserves) internal returns (address[] memory) {
-    // deploy new aToken implementation
-    AToken aTokenImplementation = new AToken();
     DataTypes.ReserveData memory reserveData;
     address[] memory aTokens = new address[](reserves.length);
 
@@ -55,29 +57,17 @@ contract MigrateV2CollectorPayload {
       // update implementation of the aToken and re-init
       ConfiguratorInputTypes.UpdateATokenInput memory input = ConfiguratorInputTypes
         .UpdateATokenInput({
-          asset: aToken.UNDERLYING_ASSET_ADDRESS(),
+          asset: reserves[i],
           treasury: NEW_COLLECTOR,
           incentivesController: address(aToken.getIncentivesController()),
           name: aToken.name(),
           symbol: aToken.symbol(),
-          implementation: address(aTokenImplementation),
+          implementation: address(ATOKEN_IMPL),
           params: '0x10' // this parameter is not actually used anywhere
         });
 
       POOL_CONFIGURATOR.updateAToken(input);
     }
-
-    // initialise aTokenImpl for security reasons
-    aTokenImplementation.initialize(
-      ILendingPoolForInit(address(POOL)),
-      NEW_COLLECTOR,
-      address(0), // AAVE Token
-      INCENTIVES_CONTROLLER,
-      18,
-      'Aave Token',
-      'AAVE',
-      '0x10' // this parameter is not actually used anywhere
-    );
 
     return aTokens;
   }
@@ -87,11 +77,10 @@ contract MigrateV2CollectorPayload {
     bytes memory initParams = abi.encodeWithSelector(
       AaveMigrationCollector.initialize.selector,
       aTokens,
-      address(INCENTIVES_CONTROLLER),
+      INCENTIVES_CONTROLLER,
       NEW_COLLECTOR
     );
 
-    AaveMigrationCollector migrationCollector = new AaveMigrationCollector();
-    COLLECTOR_PROXY.upgradeToAndCall(address(migrationCollector), initParams);
+    COLLECTOR_PROXY.upgradeToAndCall(MIGRATION_COLLECTOR, initParams);
   }
 }

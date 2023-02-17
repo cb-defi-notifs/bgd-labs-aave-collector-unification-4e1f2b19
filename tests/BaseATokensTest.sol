@@ -8,6 +8,8 @@ import {TestWithExecutor} from 'aave-helpers/GovHelpers.sol';
 import {IAToken} from '../src/interfaces/IAToken.sol';
 import {IAaveIncentivesController} from '../src/interfaces/v2/IAaveIncentivesController.sol';
 
+string constant migrationCollectorArtifact = 'out/AaveMigrationCollector.sol/AaveMigrationCollector.json';
+string constant aTokenArtifact = 'out/AToken.sol/AToken.json';
 string constant migrateV2CollectorArtifact = 'out/MigrateV2CollectorPayload.sol/MigrateV2CollectorPayload.json';
 
 abstract contract BaseATokensTest is TestWithExecutor {
@@ -30,6 +32,9 @@ abstract contract BaseATokensTest is TestWithExecutor {
     _v2collector = v2collector;
     _collector = collector;
 
+    address migrationCollector = deployCode(migrationCollectorArtifact);
+    address aTokenImpl = deployCode(aTokenArtifact);
+
     payload = deployCode(
       migrateV2CollectorArtifact,
       abi.encode(
@@ -37,7 +42,9 @@ abstract contract BaseATokensTest is TestWithExecutor {
         v2poolConfigurator,
         v2collector,
         collector,
-        address(incentivesController)
+        address(incentivesController),
+        migrationCollector,
+        aTokenImpl
       )
     );
 

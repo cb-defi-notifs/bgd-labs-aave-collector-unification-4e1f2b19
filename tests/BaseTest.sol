@@ -11,32 +11,41 @@ import {Collector} from '../src/contracts/Collector.sol';
 
 abstract contract BaseTest is TestWithExecutor {
   UpgradeAaveCollectorPayload public payload;
-  address internal _collector;
+  address internal _collectorProxy;
+  address internal _collectorImpl;
   address internal _proxyAdmin;
   address internal _newFundsAdmin;
   uint256 internal _streamId;
 
   function _setUp(
-    address collector,
+    address collectorProxy,
     address proxyAdmin,
     address newFundsAdmin,
     uint256 streamId,
     address executor
   ) public {
-    _collector = collector;
+    _collectorProxy = collectorProxy;
     _proxyAdmin = proxyAdmin;
     _newFundsAdmin = newFundsAdmin;
     _streamId = streamId;
 
-    payload = new UpgradeAaveCollectorPayload(collector, proxyAdmin, newFundsAdmin, streamId);
+    _collectorImpl = address(new Collector());
+
+    payload = new UpgradeAaveCollectorPayload(
+      _collectorProxy,
+      _collectorImpl,
+      _proxyAdmin,
+      _newFundsAdmin,
+      _streamId
+    );
     _selectPayloadExecutor(executor);
   }
 
   function testExecuteProxyAdminAndFundsAdminChanged() public {
-    ICollector collector = ICollector(_collector);
+    ICollector collector = ICollector(_collectorProxy);
     address implBefore = ProxyHelpers.getInitializableAdminUpgradeabilityProxyImplementation(
       vm,
-      _collector
+      _collectorProxy
     );
 
     uint256 currentStreamId;
@@ -50,11 +59,12 @@ abstract contract BaseTest is TestWithExecutor {
     // Assert
     address implAfter = ProxyHelpers.getInitializableAdminUpgradeabilityProxyImplementation(
       vm,
-      _collector
+      _collectorProxy
     );
 
     // implementation should change
     assertTrue(implBefore != implAfter);
+    assertTrue(implAfter == _collectorImpl);
 
     // check fundsAdmin = short executor/guardian
     assertEq(collector.getFundsAdmin(), _newFundsAdmin);
@@ -62,7 +72,7 @@ abstract contract BaseTest is TestWithExecutor {
     // check that funds admin is not the proxy admin
     vm.prank(_proxyAdmin);
 
-    address newAdmin = IInitializableAdminUpgradeabilityProxy(_collector).admin();
+    address newAdmin = IInitializableAdminUpgradeabilityProxy(_collectorProxy).admin();
     assertEq(newAdmin, _proxyAdmin);
 
     // check that stream id is set or not modified

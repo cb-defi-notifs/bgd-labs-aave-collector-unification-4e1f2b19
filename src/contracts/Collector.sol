@@ -23,10 +23,9 @@ import {ReentrancyGuard} from '../libs/ReentrancyGuard.sol';
  **/
 contract Collector is VersionedInitializable, ICollector, ReentrancyGuard {
   using SafeERC20 for IERC20;
+  using Address for address payable;
 
   /*** Storage Properties ***/
-  using SafeERC20 for IERC20;
-  using Address for address payable;
 
   /**
    * @notice Address of the current funds admin.

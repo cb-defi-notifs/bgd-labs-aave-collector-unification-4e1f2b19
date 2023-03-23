@@ -1,4 +1,4 @@
-# Collector Update <> Aave
+# Aave Collector unification
 
 This repository contains the latest version of the Aave Collector and the proposals to sync Collector implementations across different networks and pools.
 
@@ -10,15 +10,17 @@ All collectors use an "imperfect" pattern at the moment, based on a "controller 
 
 Also on the networks where two different collectors existed simultaneously for v2 and v3, accumulated assets and rewards will be transferred to the latest version of the collector and the older version will be abandoned.
 
+<br>
+
 ## Current proxies and implementations
 
-Mainnet
+**Ethereum**
 
 Proxy: [0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c](https://etherscan.io/address/0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c)
 
 Impl: [0x1aa435ed226014407Fa6b889e9d06c02B1a12AF3](https://etherscan.io/address/0x1aa435ed226014407fa6b889e9d06c02b1a12af3)
 
-Polygon
+**Polygon**
 
 Proxy v2: [0x7734280A4337F37Fbf4651073Db7c28C80B339e9](https://polygonscan.com/address/0x7734280a4337f37fbf4651073db7c28c80b339e9)
 
@@ -26,7 +28,7 @@ Proxy v3: [0xe8599F3cc5D38a9aD6F3684cd5CEa72f10Dbc383](https://polygonscan.com/a
 
 Impl: [0xC773bf5a987b29DdEAC77cf1D48a22a4Ce5B0577](https://polygonscan.com/address/0xc773bf5a987b29ddeac77cf1d48a22a4ce5b0577)
 
-Avalanche
+**Avalanche**
 
 Proxy v2: [0x467b92aF281d14cB6809913AD016a607b5ba8A36](https://snowtrace.io/address/0x467b92aF281d14cB6809913AD016a607b5ba8A3))
 
@@ -36,22 +38,24 @@ Proxy v2: [0x5ba7fd868c40c16f7aDfAe6CF87121E13FC2F7a0](https://snowtrace.io/addr
 
 Impl v3: [0xa6a7b56F27c9C943945E8A636C01E433240700D8](https://snowtrace.io/address/0xa6a7b56f27c9c943945e8a636c01e433240700d8)
 
-Optimism
+**Optimism**
 Proxy: [0xB2289E329D2F85F1eD31Adbb30eA345278F21bcf](https://optimistic.etherscan.io/address/0xb2289e329d2f85f1ed31adbb30ea345278f21bcf)
 
 Impl: [0xa6a7b56F27c9C943945E8A636C01E433240700D8](https://optimistic.etherscan.io/address/0xa6a7b56f27c9c943945e8a636c01e433240700d8)
 
-Arbitrum
+**Arbitrum**
 
 Proxy: [0x053D55f9B5AF8694c503EB288a1B7E552f590710](https://arbiscan.io/address/0x053d55f9b5af8694c503eb288a1b7e552f590710)
 
 Impl: [0xa6a7b56F27c9C943945E8A636C01E433240700D8](https://arbiscan.io/address/0xa6a7b56f27c9c943945e8a636c01e433240700d8)
 
-Fantom
+**Fantom**
 
 Proxy: [0xBe85413851D195fC6341619cD68BfDc26a25b928](https://ftmscan.com/address/0xbe85413851d195fc6341619cd68bfdc26a25b928)
 
 Impl: [0xc0F0cFBbd0382BcE3B93234E4BFb31b2aaBE36aD](https://ftmscan.com/address/0xc0f0cfbbd0382bce3b93234e4bfb31b2aabe36ad)
+
+<br>
 
 ## Mainnet & general changes against most up-to-date Collector
 
@@ -63,19 +67,29 @@ As the codebase itself mostly remained the same as in the [currently deployed ve
 - storage layout has changed a bit, Reentrancy Guard's `status` and `fundsAdmin` were swapped; an additional method `_initGuard()` was added to rewrite variables during the upgrading of the implementation.
 - shared proxy admin [0xD3cF979e676265e4f6379749DECe4708B9A22476](https://etherscan.io/address/0xd3cf979e676265e4f6379749dece4708b9a22476) is set as the admin of the collector's proxy
 
-[code diff](./diffs/mainnet.md)
-[storage layout diff](./diffs/mainnet_layout_diff.md)
+- [Ethereum code diff](./diffs/mainnet.md)
+- [Ethereum Storage layout diff](./diffs/mainnet_layout_diff.md)
+
+<br>
 
 ## Arbitrum, Avalanche, Fantom, Optimism, Polygon
 
 The difference from the current version is the addition of streaming support.
 
-[arbitrum code diff](./diffs/arbitrum.md)
-[avalanche code diff](./diffs/avalanche.md)
-[optimism code diff](./diffs/optimism.md)
-[polygon code diff](./diffs/polygon.md)
+- Arbitrum
+  - [Code diff](./diffs/arbitrum.md) 
+  - [Storage layout diff]()
+- Avalanche
+  - [Code diff](./diffs/avalanche.md)
+  - [Storage layout diff]()
+- Optimism
+  - [Code diff](./diffs/optimism.md)
+  - [Storage layout diff]()
+- Polygon
+  - [Code diff](./diffs/polygon.md)
+  - [Storage layout diff]()
 
-[storage layout diff]()
+<br>
 
 ## Polygon and Avalanche v2 migration
 
@@ -84,13 +98,17 @@ Currently, two different versions of the Collector are used for v2 and v3 pools 
 - redeploying the [aToken implementation](https://github.com/bgd-labs/protocol-v2/pull/7/files#diff-970614e9a203f546ac36da22a98f737e5ed418e6554597ddd8286ae4b474b21d) to set the new latest version of the collector
 - upgrading the implementation of the current v2 collector to migrate all the funds and accumulated rewards to the current treasury
 
-## Deployment - rewrite
+<br>
+
+## Deployment
 
 1. [UpgradeAaveCollectorPayload.sol](./src/contracts/payloads/UpgradeAaveCollectorPayload.sol) payload, which upgrades the implementation of the collector, initializes it with the new funds admin, and sets new proxy admin.
 2. [PayloadDeployment.s.sol](./scripts/PayloadDeployment.s.sol) multiple scripts to deploy the payload above on all networks.
 3. [MigrateV2CollectorPayload.sol](./src/contracts/payloads/MigrateV2CollectorPayload.sol) is the payload to deploy the new version of the aToken with the updated collector and to upgrade the implementation of the collector to the [MigrationCollector](./src/contracts/payloads/AaveMigrationCollector.sol) to migrate funds and rewards.
 4. [PayloadV2Deployment.s.sol](./scripts/PayloadV2Deployment.s.sol) deploys `MigrateV2CollectorPayload` on Avalanche and Polygon.
 5. [ProposalDeployment.s.sol](./scripts/ProposalDeployment.s.sol) initiates the proposal for the mainnet and supported L2 networks.
+
+<br>
 
 ## Development
 

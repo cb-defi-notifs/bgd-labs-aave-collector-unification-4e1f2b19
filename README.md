@@ -78,16 +78,16 @@ The difference from the current version is the addition of streaming support.
 
 - Arbitrum
   - [Code diff](./diffs/arbitrum.md) 
-  - [Storage layout diff]()
+  - [Storage layout diff](./diffs/arbitrum_layout_diff.md)
 - Avalanche
   - [Code diff](./diffs/avalanche.md)
-  - [Storage layout diff]()
+  - [Storage layout diff](./diffs/avalanche_layout_diff.md)
 - Optimism
   - [Code diff](./diffs/optimism.md)
-  - [Storage layout diff]()
+  - [Storage layout diff](./diffs/optimism_layout_diff.md)
 - Polygon
   - [Code diff](./diffs/polygon.md)
-  - [Storage layout diff]()
+  - [Storage layout diff](./diffs/polygon_layout_diff.md)
 
 <br>
 

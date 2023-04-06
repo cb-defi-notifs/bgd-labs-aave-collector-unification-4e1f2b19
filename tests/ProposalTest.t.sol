@@ -58,7 +58,7 @@ contract ProposalTestAvalanche is BaseTest {
 
 contract ProposalTestOptimism is BaseTest {
   function setUp() public {
-    vm.createSelectFork(vm.rpcUrl('optimism'));
+    vm.createSelectFork(vm.rpcUrl('optimism'), 86860560);
     _setUp(
       AaveV3Optimism.COLLECTOR,
       AaveMisc.PROXY_ADMIN_OPTIMISM,

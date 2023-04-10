@@ -51,7 +51,7 @@ abstract contract BaseATokensTest is TestWithExecutor {
     _selectPayloadExecutor(executor);
   }
 
-  function testExecuteATokensTransferedAndImplUpdated() public {
+  function testATokensTransferedAndImplUpdated() public {
     // Arrange
     // get all reserves
     DataTypes.ReserveData memory reserveData;
@@ -90,5 +90,37 @@ abstract contract BaseATokensTest is TestWithExecutor {
     uint256 remainingReward = _incentivesController.getUserUnclaimedRewards(_v2collector);
     assertEq(remainingReward, 0);
     assertEq(IERC20(rewardToken).balanceOf(_collector), reward);
+  }
+
+  function testATokensBase() public {
+    // Arrange
+    // get all reserves
+    DataTypes.ReserveData memory reserveData;
+    address[] memory reserves = _v2pool.getReservesList();
+
+    // random user
+    address user = vm.addr(0xA11CEB);
+
+    // Act
+    _executePayload(payload);
+
+    for (uint256 i = 0; i < reserves.length; i++) {
+      reserveData = _v2pool.getReserveData(reserves[i]);
+
+      // deal token to the user
+      deal(reserves[i], user, 100000);
+
+      vm.startPrank(user);
+
+      // deposit asset to the pool
+      IERC20(reserves[i]).approve(address(_v2pool), 100000);
+      _v2pool.deposit(reserves[i], 100000, user, 0);
+
+      // check that aToken is minted to the user
+      uint256 balance = IERC20(reserveData.aTokenAddress).balanceOf(user);
+      assertTrue(balance >= 100000);
+
+      vm.stopPrank();
+    }
   }
 }

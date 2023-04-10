@@ -77,7 +77,7 @@ As the codebase itself mostly remained the same as in the [currently deployed ve
 The difference from the current version is the addition of streaming support.
 
 - Arbitrum
-  - [Code diff](./diffs/arbitrum.md) 
+  - [Code diff](./diffs/arbitrum.md)
   - [Storage layout diff](./diffs/arbitrum_layout_diff.md)
 - Avalanche
   - [Code diff](./diffs/avalanche.md)
@@ -95,7 +95,7 @@ The difference from the current version is the addition of streaming support.
 
 Currently, two different versions of the Collector are used for v2 and v3 pools on Avalanche and Polygon. To combine all funds and use only one instance of the treasury, we are doing the following:
 
-- redeploying the [aToken implementation](https://github.com/bgd-labs/protocol-v2/pull/7/files#diff-970614e9a203f546ac36da22a98f737e5ed418e6554597ddd8286ae4b474b21d) to set the new latest version of the collector
+- redeploying the [aToken implementation](https://github.com/bgd-labs/protocol-v2/pull/7/files#diff-970614e9a203f546ac36da22a98f737e5ed418e6554597ddd8286ae4b474b21d) to set the new latest version of the collector. Here is the [diff](./diffs/atoken_diff.md) with the deployed version of the AToken.
 - upgrading the implementation of the current v2 collector to migrate all the funds and accumulated rewards to the current treasury
 
 <br>

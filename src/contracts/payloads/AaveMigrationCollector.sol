@@ -25,20 +25,6 @@ contract AaveMigrationCollector is VersionedInitializable {
   }
 
   /**
-   * @notice returns the recipient collector
-   */
-  function getRecipientCollector() public view returns (address) {
-    return RECIPIENT_COLLECTOR;
-  }
-
-  /**
-   * @notice returns the address of the incentives controller
-   */
-  function getIncentivesController() public view returns (address) {
-    return address(INCENTIVES_CONTROLLER);
-  }
-
-  /**
    * @notice initializes the contract upon assignment to the InitializableAdminUpgradeabilityProxy
    * migrates all the assets to the new collector
    * @param assets list of the aTokens to transfer.
@@ -61,7 +47,7 @@ contract AaveMigrationCollector is VersionedInitializable {
    * @notice migrates all the assets to the new collector
    * @param assets list of the aTokens to transfer.
    */
-  function _transferToRecipientCollector(address[] calldata assets) internal {
+  function _transferToRecipientCollector(address[] memory assets) internal {
     for (uint256 i = 0; i < assets.length; i++) {
       IERC20 token = IERC20(assets[i]);
       uint256 balance = token.balanceOf(address(this));
@@ -75,7 +61,7 @@ contract AaveMigrationCollector is VersionedInitializable {
    * @notice migrates all the rewards to the new recipient collector
    * @param assets list of the aTokens to claim rewards for.
    */
-  function _claimRewards(address[] calldata assets) internal {
+  function _claimRewards(address[] memory assets) internal {
     uint256 balance = INCENTIVES_CONTROLLER.getRewardsBalance(assets, address(this));
     INCENTIVES_CONTROLLER.claimRewards(assets, balance, RECIPIENT_COLLECTOR);
   }

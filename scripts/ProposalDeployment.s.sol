@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import 'forge-std/console.sol';
 import {Script} from 'forge-std/Script.sol';
 import {GovHelpers} from 'aave-helpers/GovHelpers.sol';
 
@@ -28,7 +27,7 @@ contract ProposalDeployment is Script {
 
     GovHelpers.createProposal(
       payloads,
-      bytes32(0) // TODO: replace with proper ipfs hash
+      0xb1fe8b52c60e67743e3f9d406bb267f517fc87b6cd63e23b0754fa8e52c67441
     );
 
     vm.stopBroadcast();
